@@ -1,0 +1,133 @@
+/* Login Specific Styling - TUL Theme */
+
+.login-wrapper {
+  background: linear-gradient(135deg, #1e293b 0%, #0f172a 50%, #580014 100%);
+  position: relative;
+  overflow: hidden;
+  width: 100vw;
+}
+
+/* Background floating shapes */
+.bg-shape-1 {
+  position: absolute;
+  top: -10%;
+  left: -10%;
+  width: 40vw;
+  height: 40vw;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(163, 0, 38, 0.15) 0%, transparent 70%);
+  filter: blur(40px);
+  pointer-events: none;
+}
+
+.bg-shape-2 {
+  position: absolute;
+  bottom: -10%;
+  right: -10%;
+  width: 50vw;
+  height: 50vw;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(100, 116, 139, 0.1) 0%, transparent 70%);
+  filter: blur(60px);
+  pointer-events: none;
+}
+
+/* Card layout */
+.card-login {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 1.25rem;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+}
+
+.accent-bar {
+  height: 5px;
+  background: linear-gradient(90deg, #a30026 0%, #cbd5e1 100%);
+  width: 100%;
+}
+
+/* TUL primary color highlighted text */
+.text-primary-color {
+  color: #a30026;
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+}
+
+/* Logo shield */
+.logo-shield {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background-color: #a30026;
+  box-shadow: 0 4px 15px rgba(163, 0, 38, 0.4);
+  transition: transform 0.4s ease;
+}
+
+.card-login:hover .logo-shield {
+  transform: scale(1.08) rotate(5deg);
+}
+
+/* Input group styling */
+.input-group-custom {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-icon {
+  position: absolute;
+  left: 15px;
+  color: #94a3b8;
+  pointer-events: none;
+  font-size: 1.05rem;
+}
+
+.login-input {
+  padding-left: 45px !important;
+  background-color: #f8fafc;
+  border: 1px solid #e2e8f0;
+}
+
+.login-input:focus {
+  background-color: #ffffff;
+  border-color: #a30026;
+}
+
+/* Styled text sizes */
+.text-xs {
+  font-size: 0.75rem !important;
+}
+
+.text-xxs {
+  font-size: 0.65rem !important;
+}
+
+/* Alert modifications */
+.alert-custom-danger {
+  background-color: #fef2f2;
+  color: #991b1b;
+  border-left: 4px solid #ef4444;
+}
+
+/* Button Submit style */
+.btn-login {
+  background-color: #a30026;
+  color: #ffffff;
+  border: none;
+  transition: all 0.25s ease;
+}
+
+.btn-login:hover:not(:disabled) {
+  background-color: #85001e;
+  color: #ffffff;
+}
+
+.btn-login:disabled {
+  background-color: #e2e8f0;
+  color: #94a3b8;
+  cursor: not-allowed;
+}
+
+.card-footer {
+  background-color: rgba(248, 250, 252, 0.8) !important;
+}

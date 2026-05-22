@@ -1,0 +1,84 @@
+/* Custom aesthetics for the Subject Directory Table and Cards */
+
+.sortable-header {
+  cursor: pointer;
+  user-select: none;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.sortable-header:hover {
+  background-color: var(--primary-light) !important;
+  color: var(--primary-color) !important;
+}
+
+.sortable-header i {
+  transition: transform 0.2s ease;
+}
+
+/* Custom Input Groups with elegant left icons */
+.input-group-custom {
+  position: relative;
+  display: flex;
+  align-items: stretch;
+  width: 100%;
+}
+
+.input-group-custom .input-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.625rem 0.875rem;
+  background-color: #f8fafc;
+  border: 1px solid #cbd5e1;
+  border-right: none;
+  border-radius: 0.5rem 0 0 0.5rem;
+  color: var(--secondary-color);
+  font-size: 1.05rem;
+  transition: all 0.2s ease;
+}
+
+.input-group-custom .form-control {
+  border-radius: 0 0.5rem 0.5rem 0;
+  box-shadow: none;
+}
+
+/* Sync focus state of icon background with input field */
+.input-group-custom:focus-within .input-icon {
+  border-color: var(--primary-color);
+  color: var(--primary-color);
+  background-color: var(--primary-light);
+}
+
+/* Alert styling overrides */
+.alert-success {
+  background-color: #ecfdf5;
+  color: #065f46;
+  border: 1px solid #a7f3d0;
+}
+
+.alert-danger {
+  background-color: #fef2f2;
+  color: #991b1b;
+  border: 1px solid #fca5a5;
+}
+
+.text-success-800 {
+  color: #065f46;
+}
+
+.text-success-700 {
+  color: #047857;
+}
+
+.text-danger-800 {
+  color: #991b1b;
+}
+
+.text-danger-700 {
+  color: #b91c1c;
+}
+
+.btn-xs {
+  padding: 0.25rem 0.5rem;
+  font-size: 0.75rem;
+}

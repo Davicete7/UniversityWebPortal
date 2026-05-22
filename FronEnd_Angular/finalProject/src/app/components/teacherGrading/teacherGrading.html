@@ -1,0 +1,218 @@
+<div class="container mt-4 animate-fade-in">
+  <!-- Cabecera Principal -->
+  <div class="portal-header shadow-sm rounded-4 p-4 mb-4 text-white">
+    <div class="d-flex align-items-center">
+      <div class="icon-box bg-white text-primary-color rounded-3 p-3 me-3 shadow-xs">
+        <i class="bi bi-file-earmark-check-fill fs-2"></i>
+      </div>
+      <div>
+        <h2 class="mb-0 fw-extrabold tracking-tight">Teacher Evaluation Center</h2>
+        <p class="mb-0 text-white-50 text-sm">Select a course to view student registries, add grades, and check historical records.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Contenedor de Alertas de Feedback -->
+  @if (successMessage) {
+    <div class="alert alert-custom alert-success border-0 shadow-sm rounded-3 p-3 mb-4 d-flex align-items-center justify-content-between" role="alert">
+      <span class="d-flex align-items-center">
+        <i class="bi bi-check-circle-fill me-2 fs-5"></i>
+        <span>{{ successMessage }}</span>
+      </span>
+      <button type="button" class="btn-close shadow-none" (click)="successMessage = ''"></button>
+    </div>
+  }
+
+  @if (errorMessage) {
+    <div class="alert alert-custom alert-danger border-0 shadow-sm rounded-3 p-3 mb-4 d-flex align-items-center justify-content-between" role="alert">
+      <span class="d-flex align-items-center">
+        <i class="bi bi-exclamation-triangle-fill me-2 fs-5"></i>
+        <span>{{ errorMessage }}</span>
+      </span>
+      <button type="button" class="btn-close shadow-none" (click)="errorMessage = ''"></button>
+    </div>
+  }
+
+  <div class="row g-4">
+    <!-- Panel Lateral: Mis Asignaturas Impartidas -->
+    <div class="col-lg-3">
+      <div class="card card-premium border-0 shadow-sm rounded-4 overflow-hidden">
+        <div class="card-header bg-white border-0 pt-4 px-4 pb-0">
+          <h5 class="mb-0 fw-bold text-dark"><i class="bi bi-bookmarks text-primary-color me-2"></i>My Subjects</h5>
+          <span class="text-muted small">Subjects you currently teach</span>
+        </div>
+        <div class="card-body p-4">
+          <div class="list-group list-group-flush gap-2">
+            @for (sub of mySubjects; track sub.id) {
+              <div 
+                class="list-group-item list-item-custom rounded-3 border-0 p-3 clickable"
+                (click)="onSelectSubject(sub)"
+                [ngClass]="{'active-item': selectedSubject?.id === sub.id}"
+              >
+                <div class="fw-bold text-dark list-title">{{ sub.subjectName }}</div>
+                @if (sub.degrees && sub.degrees.length > 0) {
+                  @for (deg of sub.degrees; track deg.id) {
+                    <span class="text-muted text-xs me-1 d-inline-block">{{ deg.name }}</span>
+                  }
+                } @else {
+                  <span class="text-muted text-xs">General Curriculum</span>
+                }
+              </div>
+            } @empty {
+              <div class="text-center py-4 text-muted">
+                <i class="bi bi-journal-x fs-2 d-block mb-2 text-black-50"></i>
+                <p class="mb-0 small fw-bold">You are not assigned to any subjects yet.</p>
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Panel Central: Evaluación de Alumnos -->
+    <div class="col-lg-9">
+      @if (selectedSubject) {
+        <div class="card card-premium border-0 shadow-sm rounded-4 overflow-hidden">
+          <div class="card-header bg-white border-0 pt-4 px-4 pb-0 d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-3">
+            <div>
+              <h4 class="mb-0 fw-bold text-dark">{{ selectedSubject.subjectName }}</h4>
+              <span class="text-muted small">Evaluating enrolled students (Total: {{ enrolledStudents.length }})</span>
+            </div>
+            <!-- Buscador Reactivo para filtrar alumnos (Fase 5 - Evento input) -->
+            <div class="search-wrapper position-relative">
+              <i class="bi bi-search search-icon text-muted"></i>
+              <input 
+                type="text" 
+                class="form-control search-input rounded-pill" 
+                placeholder="Search students..."
+                [(ngModel)]="studentSearchQuery"
+                (input)="getFilteredStudents()"
+              >
+            </div>
+          </div>
+
+          <div class="card-body p-4">
+            <div class="table-responsive">
+              <table class="table table-custom align-middle">
+                <thead>
+                  <tr>
+                    <th scope="col" (click)="sortStudents('id')" class="sortable-header py-3">
+                      Student ID
+                      @if (studentsSortColumn === 'id') {
+                        <i class="bi" [class.bi-caret-up-fill]="studentsSortAscending" [class.bi-caret-down-fill]="!studentsSortAscending"></i>
+                      }
+                    </th>
+                    <th scope="col" (click)="sortStudents('fullName')" class="sortable-header py-3">
+                      Full Name
+                      @if (studentsSortColumn === 'fullName') {
+                        <i class="bi" [class.bi-caret-up-fill]="studentsSortAscending" [class.bi-caret-down-fill]="!studentsSortAscending"></i>
+                      }
+                    </th>
+                    <th scope="col" (click)="sortStudents('grade')" class="sortable-header py-3">
+                      Grades Catalog
+                      @if (studentsSortColumn === 'grade') {
+                        <i class="bi" [class.bi-caret-up-fill]="studentsSortAscending" [class.bi-caret-down-fill]="!studentsSortAscending"></i>
+                      }
+                    </th>
+                    <th scope="col" class="py-3 text-end" style="width: 250px;">Evaluate Student</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (student of getFilteredStudents(); track student.id) {
+                    <tr class="student-row">
+                      <td><span class="fw-bold text-secondary">#{{ student.id }}</span></td>
+                      <td>
+                        <div class="fw-bold text-dark">{{ student.firstName }} {{ student.lastName }}</div>
+                        <a href="mailto:{{ student.academicEmail }}" class="text-muted small text-decoration-none email-link">
+                          {{ student.academicEmail }}
+                        </a>
+                      </td>
+                      <td>
+                        <!-- Catálogo de Notas con Edición Inline -->
+                        <div class="d-flex flex-wrap gap-1 align-items-center">
+                          @for (g of gradesMap[student.id]; track g.id) {
+                            @if (editingGradeId === g.id) {
+                              <div class="d-flex align-items-center gap-1">
+                                <select class="form-select form-select-sm" style="width: 80px; font-size: 0.75rem;" [(ngModel)]="editingGradeValue">
+                                  <option [value]="2.0">2.0</option>
+                                  <option [value]="3.0">3.0</option>
+                                  <option [value]="3.5">3.5</option>
+                                  <option [value]="4.0">4.0</option>
+                                  <option [value]="4.5">4.5</option>
+                                  <option [value]="5.0">5.0</option>
+                                </select>
+                                <button class="btn btn-sm btn-success px-1 py-0" (click)="onSaveEditGrade(g.id)" title="Save"><i class="bi bi-check-lg"></i></button>
+                                <button class="btn btn-sm btn-secondary px-1 py-0" (click)="onCancelEditGrade()" title="Cancel"><i class="bi bi-x-lg"></i></button>
+                              </div>
+                            } @else {
+                              <span 
+                                class="badge grade-badge py-2 px-2 pointer-cursor"
+                                [ngClass]="{
+                                  'bg-danger-subtle text-danger border-danger-subtle': g.gradeValue < 3.0,
+                                  'bg-warning-subtle text-warning-emphasis border-warning-subtle': g.gradeValue >= 3.0 && g.gradeValue < 4.0,
+                                  'bg-success-subtle text-success border-success-subtle': g.gradeValue >= 4.0
+                                }"
+                                title="Click to edit - Given on {{ g.dateGiven | date:'short' }}"
+                                (click)="onStartEditGrade(g)"
+                              >
+                                {{ g.gradeValue | number:'1.1-1' }} <i class="bi bi-pencil-fill" style="font-size: 0.6rem; margin-left: 2px;"></i>
+                              </span>
+                            }
+                          } @empty {
+                            <span class="text-muted small text-italic">No grades assigned</span>
+                          }
+                        </div>
+                      </td>
+                      <td class="text-end">
+                        <!-- Formulario de Evaluación (Fase 5 - Evento change y ngSubmit/click) -->
+                        <div class="d-flex align-items-center justify-content-end gap-2">
+                          <select 
+                            class="form-select form-select-sm select-premium" 
+                            style="width: 90px;"
+                            [(ngModel)]="selectedGrades[student.id]"
+                            name="gradeSelect_{{ student.id }}"
+                          >
+                            <option [value]="2.0">2.0 (F)</option>
+                            <option [value]="3.0">3.0 (D)</option>
+                            <option [value]="3.5">3.5 (C)</option>
+                            <option [value]="4.0">4.0 (B)</option>
+                            <option [value]="4.5">4.5 (B+)</option>
+                            <option [value]="5.0">5.0 (A)</option>
+                          </select>
+                          <button 
+                            class="btn btn-primary bg-primary-color border-primary-color btn-sm rounded-pill px-3 fw-bold btn-hover-grow" 
+                            (click)="onAssignGrade(student.id)"
+                          >
+                            Grade
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  } @empty {
+                    <tr>
+                      <td colspan="4" class="text-center py-5 text-muted">
+                        <div class="empty-state">
+                          <i class="bi bi-people fs-1 mb-2"></i>
+                          <p class="mb-0 fw-bold">No students enrolled</p>
+                          <span class="small">Ensure students matriculate into this course</span>
+                        </div>
+                      </td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      } @else {
+        <!-- Estado Vacío cuando no hay materia elegida -->
+        <div class="card border-0 shadow-sm rounded-4 p-5 text-center text-muted bg-white">
+          <i class="bi bi-journal-check text-muted mb-3" style="font-size: 4rem; opacity: 0.4;"></i>
+          <h4 class="fw-bold text-dark">No Course Selected</h4>
+          <p class="mb-0 max-w-md mx-auto">Please choose one of your subjects from the left sidebar to start evaluating students, view their current records, or add new grades.</p>
+        </div>
+      }
+    </div>
+  </div>
+</div>

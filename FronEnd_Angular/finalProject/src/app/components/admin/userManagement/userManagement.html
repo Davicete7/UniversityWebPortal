@@ -1,0 +1,564 @@
+<div class="container-fluid py-3 animate-fade-in">
+  <!-- Section Title -->
+  <div class="d-flex align-items-center justify-content-between mb-4 border-bottom pb-3">
+    <div class="d-flex align-items-center gap-3">
+      <div class="bg-primary-light text-primary-color rounded-3 p-3 d-flex align-items-center justify-content-center shadow-sm" style="width: 56px; height: 56px;">
+        <i class="bi bi-shield-lock-fill fs-2"></i>
+      </div>
+      <div>
+        <h2 class="fw-extrabold text-dark mb-1">Administrative Center</h2>
+        <p class="text-muted mb-0 small">Manage academic users, student enrollments, final grades, and degree programs.</p>
+      </div>
+    </div>
+    <span class="badge bg-slate-900 text-white rounded-pill px-3 py-1.5 text-xs font-semibold shadow-xs">Admin Workspace</span>
+  </div>
+
+  <!-- Notification Alerts -->
+  @if (successMessage) {
+    <div class="alert alert-success border-0 rounded-3 shadow-sm d-flex align-items-center gap-3 py-3 px-4 mb-4" role="alert">
+      <i class="bi bi-check-circle-fill fs-4 text-success"></i>
+      <div class="flex-grow-1">
+        <strong class="d-block text-success-800">Success</strong>
+        <span class="text-success-700 small">{{ successMessage }}</span>
+      </div>
+      <button type="button" class="btn-close ms-auto" (click)="successMessage = ''" aria-label="Close"></button>
+    </div>
+  }
+
+  @if (errorMessage) {
+    <div class="alert alert-danger border-0 rounded-3 shadow-sm d-flex align-items-center gap-3 py-3 px-4 mb-4" role="alert">
+      <i class="bi bi-exclamation-triangle-fill fs-4 text-danger"></i>
+      <div class="flex-grow-1">
+        <strong class="d-block text-danger-800">Validation / Server Alert</strong>
+        <span class="text-danger-700 small">{{ errorMessage }}</span>
+      </div>
+      <button type="button" class="btn-close ms-auto" (click)="errorMessage = ''" aria-label="Close"></button>
+    </div>
+  }
+
+
+  <!-- Tab Content: USER DIRECTORY -->
+  @if (activeTab === 'directory') {
+    <div class="row g-4 animate-fade-in">
+      <div class="col-xl-7 col-lg-6">
+        <div class="card card-premium border-0 shadow-sm">
+          <div class="card-header bg-white border-bottom py-3 px-4 d-flex align-items-center justify-content-between">
+            <h5 class="mb-0 fw-bold text-dark"><i class="bi bi-people text-primary-color me-2"></i>Active System Profiles</h5>
+            <span class="badge bg-primary-light text-primary-color rounded-pill px-2.5 py-1 text-xxs font-bold">{{ filteredUsers.length }} Users found</span>
+          </div>
+
+          <div class="card-body p-4">
+            <!-- Search & Filters -->
+            <div class="mb-4">
+              <div class="input-group-custom shadow-xs">
+                <span class="input-icon"><i class="bi bi-search"></i></span>
+                <input
+                  type="text"
+                  class="form-control py-2.5"
+                  [(ngModel)]="searchQuery"
+                  placeholder="Search by name, email, username or role...">
+              </div>
+            </div>
+
+            <!-- Users Directory List -->
+            <div class="table-responsive border rounded-3" style="max-height: 520px; overflow-y: auto;">
+              <table class="table table-hover align-middle mb-0">
+                <thead class="table-light sticky-top">
+                  <tr>
+                    <th class="ps-4 sortable-header" (click)="sortUsers('username')">
+                      User
+                      @if (usersSortColumn === 'username') {
+                        <i class="bi" [class.bi-caret-up-fill]="usersSortAscending" [class.bi-caret-down-fill]="!usersSortAscending"></i>
+                      }
+                    </th>
+                    <th class="sortable-header" (click)="sortUsers('academicEmail')">
+                      Email
+                      @if (usersSortColumn === 'academicEmail') {
+                        <i class="bi" [class.bi-caret-up-fill]="usersSortAscending" [class.bi-caret-down-fill]="!usersSortAscending"></i>
+                      }
+                    </th>
+                    <th class="sortable-header" (click)="sortUsers('role')">
+                      Role
+                      @if (usersSortColumn === 'role') {
+                        <i class="bi" [class.bi-caret-up-fill]="usersSortAscending" [class.bi-caret-down-fill]="!usersSortAscending"></i>
+                      }
+                    </th>
+                    <th class="sortable-header" (click)="sortUsers('degree')">
+                      Degree Program
+                      @if (usersSortColumn === 'degree') {
+                        <i class="bi" [class.bi-caret-up-fill]="usersSortAscending" [class.bi-caret-down-fill]="!usersSortAscending"></i>
+                      }
+                    </th>
+                    <th class="text-end pe-4">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @if (filteredUsers.length === 0) {
+                    <tr>
+                      <td colspan="5" class="text-center py-5 text-muted">
+                        <i class="bi bi-people fs-1 d-block mb-3 opacity-50"></i>
+                        No users match the search criteria.
+                      </td>
+                    </tr>
+                  }
+                  @for (user of filteredUsers; track user.id) {
+                    <tr
+                      class="pointer-cursor transition-all"
+                      [class.bg-primary-light]="selectedUser?.id === user.id"
+                      (click)="selectUser(user)">
+                      <td class="ps-4">
+                        <div class="d-flex align-items-center gap-3">
+                          <div class="avatar-sm rounded-circle d-flex align-items-center justify-content-center text-white fw-bold shadow-xs"
+                               [style.background-color]="user.userRole?.roleName === 'ROLE_ADMIN' ? '#f43f5e' : (user.userRole?.roleName === 'ROLE_TEACHER' ? '#0ea5e9' : '#10b981')">
+                            @if (user.avatar) {
+                              <img [src]="user.avatar" class="avatar-img-sm rounded-circle" alt="avatar">
+                            } @else {
+                              {{ user.firstName[0] }}{{ user.lastName[0] }}
+                            }
+                          </div>
+                          <div>
+                            <span class="d-block fw-bold text-dark">{{ user.firstName }} {{ user.lastName }}</span>
+                            <span class="text-xxs text-muted">@{{ user.username }}</span>
+                          </div>
+                        </div>
+                      </td>
+                      <td class="small">{{ user.academicEmail }}</td>
+                      <td>
+                        <span class="badge text-xxs font-bold uppercase rounded-pill px-2.5 py-1"
+                              [class.bg-rose-100]="user.userRole?.roleName === 'ROLE_ADMIN'"
+                              [class.text-rose-700]="user.userRole?.roleName === 'ROLE_ADMIN'"
+                              [class.bg-sky-100]="user.userRole?.roleName === 'ROLE_TEACHER'"
+                              [class.text-sky-700]="user.userRole?.roleName === 'ROLE_TEACHER'"
+                              [class.bg-emerald-100]="user.userRole?.roleName === 'ROLE_STUDENT'"
+                              [class.text-emerald-700]="user.userRole?.roleName === 'ROLE_STUDENT'">
+                          {{ user.userRole?.roleName?.replace('ROLE_', '') }}
+                        </span>
+                      </td>
+                      <td class="small text-muted font-semibold">
+                        {{ user.degree?.name || 'Unassigned' }}
+                      </td>
+                      <td class="text-end pe-4">
+                        <button class="btn btn-sm btn-outline-primary px-3 rounded-2.5 fw-bold transition-all shadow-xs" (click)="$event.stopPropagation(); selectUser(user)">
+                          <i class="bi bi-pencil-fill me-1"></i>Manage
+                        </button>
+                      </td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Detail & Action Panel for Selected User -->
+      <div class="col-xl-5 col-lg-6">
+        @if (selectedUser) {
+          <div class="card card-premium border-0 shadow-sm animate-slide-in">
+            <div class="card-header bg-white border-bottom py-3 px-4 d-flex align-items-center justify-content-between">
+              <h5 class="mb-0 fw-bold text-dark"><i class="bi bi-sliders text-primary-color me-2"></i>Profile Management</h5>
+              <button type="button" class="btn-close" (click)="closeEditPanel()"></button>
+            </div>
+
+            <div class="card-body p-4" style="max-height: 600px; overflow-y: auto;">
+
+              <!-- Tab Title / Mini-Header -->
+              <div class="d-flex align-items-center gap-3 mb-4 pb-3 border-bottom">
+                <div class="avatar-md rounded-circle d-flex align-items-center justify-content-center text-white fw-bold fs-3 shadow"
+                     [style.background-color]="selectedUser.role === 'ROLE_ADMIN' ? '#f43f5e' : (selectedUser.role === 'ROLE_TEACHER' ? '#0ea5e9' : '#10b981')">
+                  @if (selectedUser.avatar) {
+                    <img [src]="selectedUser.avatar" class="avatar-img-md rounded-circle" alt="avatar">
+                  } @else {
+                    {{ selectedUser.firstName[0] }}{{ selectedUser.lastName[0] }}
+                  }
+                </div>
+                <div>
+                  <h6 class="fw-bold mb-0 text-dark">{{ selectedUser.firstName }} {{ selectedUser.lastName }}</h6>
+                  <span class="text-xs text-muted">Editing ID: {{ selectedUser.id }} ({{ selectedUser.role?.replace('ROLE_', '') }})</span>
+                </div>
+              </div>
+
+              <!-- General Info Form -->
+              <form (ngSubmit)="onUpdateUser()" class="mb-4">
+                <div class="form-section-title text-uppercase text-xxs tracking-widest fw-bold text-slate-400 mb-3">
+                  System Credentials & Profile
+                </div>
+
+                <div class="row g-3">
+                  <div class="col-6">
+                    <label class="form-label fw-bold text-dark small mb-1">First Name</label>
+                    <input type="text" class="form-control" name="editFirstName" [(ngModel)]="selectedUser.firstName" required>
+                  </div>
+                  <div class="col-6">
+                    <label class="form-label fw-bold text-dark small mb-1">Last Name</label>
+                    <input type="text" class="form-control" name="editLastName" [(ngModel)]="selectedUser.lastName" required>
+                  </div>
+                  <div class="col-12">
+                    <label class="form-label fw-bold text-dark small mb-1">Username</label>
+                    <input type="text" class="form-control" name="editUsername" [(ngModel)]="selectedUser.username" required>
+                  </div>
+                  <div class="col-12">
+                    <label class="form-label fw-bold text-dark small mb-1">Academic Email</label>
+                    <input type="email" class="form-control" name="editEmail" [(ngModel)]="selectedUser.academicEmail" required>
+                  </div>
+                  <div class="col-12">
+                    <label class="form-label fw-bold text-dark small mb-1">New Password <span class="text-muted text-xxs font-normal">(Leave blank to keep current)</span></label>
+                    <input type="password" class="form-control" name="editPassword" [(ngModel)]="selectedUser.password" placeholder="••••••••">
+                  </div>
+
+                  <div class="col-6">
+                    <label class="form-label fw-bold text-dark small mb-1">System Role</label>
+                    <select class="form-select text-xs" name="editRole" [(ngModel)]="selectedUser.role">
+                      <option value="ROLE_STUDENT">Student</option>
+                      <option value="ROLE_TEACHER">Teacher</option>
+                      <option value="ROLE_ADMIN">Administrator</option>
+                    </select>
+                  </div>
+
+                  <div class="col-6">
+                    <label class="form-label fw-bold text-dark small mb-1">
+                      Academic Degree
+                      @if (selectedUser.role === 'ROLE_STUDENT' || selectedUser.role === 'ROLE_TEACHER') {
+                        <span class="text-danger">*</span>
+                      }
+                    </label>
+                    <select class="form-select text-xs" name="editDegreeId" [(ngModel)]="selectedUser.degreeId">
+                      <option [ngValue]="null">No Degree Program Assigned</option>
+                      @for (degree of degreesList; track degree.id) {
+                        <option [value]="degree.id">{{ degree.name }}</option>
+                      }
+                    </select>
+                  </div>
+
+                  <div class="col-12">
+                    <label class="form-label fw-bold text-dark small mb-1">Phone Number</label>
+                    <input type="text" class="form-control" name="editPhone" [(ngModel)]="selectedUser.phoneNumber" placeholder="e.g. +48 42 631 20 00">
+                  </div>
+
+                  <div class="col-12">
+                    <label class="form-label fw-bold text-dark small mb-1">Academic Biography</label>
+                    <textarea class="form-control" name="editBio" [(ngModel)]="selectedUser.bio" rows="2" placeholder="e.g. Mechanical engineering research..."></textarea>
+                  </div>
+                </div>
+
+                <!-- Update and Delete Buttons -->
+                <div class="d-flex justify-content-between mt-4 pt-3 border-top gap-3">
+                  <button type="button" class="btn btn-outline-danger px-3 py-2.5 rounded-3 fw-bold shadow-xs flex-grow-1" (click)="onDeleteUser(selectedUser.id)">
+                    <i class="bi bi-trash3-fill me-1"></i>Delete Profile
+                  </button>
+                  <button type="submit" class="btn btn-primary bg-primary-color border-primary-color px-4 py-2.5 rounded-3 fw-bold shadow-xs flex-grow-1">
+                    <i class="bi bi-save2-fill me-2"></i>Save Changes
+                  </button>
+                </div>
+              </form>
+
+              <!-- Enrolled Subjects section (only for student role) -->
+              @if (selectedUser.role === 'ROLE_STUDENT') {
+                <div class="mt-4 pt-4 border-top">
+                  <div class="form-section-title text-uppercase text-xxs tracking-widest fw-bold text-slate-400 mb-3">
+                    Course Enrollments
+                  </div>
+
+                  <!-- Matriculadas -->
+                  <div class="card bg-slate-50 border-0 rounded-3 p-3 mb-3">
+                    <h6 class="fw-bold text-dark text-xs mb-2.5"><i class="bi bi-journal-check me-2 text-emerald-600"></i>Active Enrollments</h6>
+                    @if (selectedUserSubjects.length === 0) {
+                      <span class="text-muted small d-block text-center py-2">This student is not enrolled in any subjects.</span>
+                    } @else {
+                      <div class="d-flex flex-wrap gap-2">
+                        @for (subject of selectedUserSubjects; track subject.id) {
+                          <span class="bg-light text-dark border rounded shadow-xs py-2 px-2.5 d-flex align-items-center gap-2 text-xs font-semibold">
+                            <span>{{ subject.subjectName }}</span>
+                            <button type="button" class="btn-close text-danger" style="font-size: 0.65rem;" (click)="onUnenrollStudent(subject.id)" aria-label="Unenroll"></button>
+                          </span>
+                        }
+                      </div>
+                    }
+                  </div>
+
+                  <!-- Matricular en Nueva -->
+                  <div class="d-flex gap-2 align-items-end mt-2">
+                    <div class="flex-grow-1">
+                      <label class="form-label fw-bold text-dark small mb-1">Enroll in New Subject</label>
+                      <select class="form-select text-xs" [(ngModel)]="newEnrollmentSubjectId">
+                        <option [value]="0">-- Select subject to enroll --</option>
+                        @for (subject of subjectsList; track subject.id) {
+                          <option [value]="subject.id">{{ subject.subjectName }}</option>
+                        }
+                      </select>
+                    </div>
+                    <button type="button" class="btn btn-primary bg-primary-color border-primary-color py-2 rounded-2.5 shadow-xs" (click)="onEnrollStudent()">
+                      <i class="bi bi-plus-circle-fill"></i>
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Grades / Tasks section (only for student role) -->
+                <div class="mt-4 pt-4 border-top">
+                  <div class="form-section-title text-uppercase text-xxs tracking-widest fw-bold text-slate-400 mb-3">
+                    Evaluation & Grades (Final)
+                  </div>
+
+                  <!-- Lista de Notas -->
+                  <div class="card bg-slate-50 border-0 rounded-3 p-3 mb-3">
+                    <h6 class="fw-bold text-dark text-xs mb-2.5"><i class="bi bi-award me-2 text-sky-600"></i>Assigned Final Grades</h6>
+                    @if (selectedUserGrades.length === 0) {
+                      <span class="text-muted small d-block text-center py-2">No final grades have been submitted yet.</span>
+                    } @else {
+                      <div class="table-responsive">
+                        <table class="table table-sm table-borderless align-middle mb-0 text-xs">
+                          <thead>
+                            <tr class="text-muted border-bottom">
+                              <th class="sortable-header" (click)="sortGrades('subject')">
+                                Subject
+                                @if (gradesSortColumn === 'subject') {
+                                  <i class="bi" [class.bi-caret-up-fill]="gradesSortAscending" [class.bi-caret-down-fill]="!gradesSortAscending"></i>
+                                }
+                              </th>
+                              <th class="sortable-header" (click)="sortGrades('value')">
+                                Final Grade
+                                @if (gradesSortColumn === 'value') {
+                                  <i class="bi" [class.bi-caret-up-fill]="gradesSortAscending" [class.bi-caret-down-fill]="!gradesSortAscending"></i>
+                                }
+                              </th>
+                              <th class="sortable-header" (click)="sortGrades('examiner')">
+                                Graded By
+                                @if (gradesSortColumn === 'examiner') {
+                                  <i class="bi" [class.bi-caret-up-fill]="gradesSortAscending" [class.bi-caret-down-fill]="!gradesSortAscending"></i>
+                                }
+                              </th>
+                              <th class="text-end">Actions</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            @for (grade of selectedUserGrades; track grade.id) {
+                              <tr>
+                                <td class="fw-bold">{{ grade.evaluatedSubject?.subjectName }}</td>
+                                <td>
+                                  <span class="badge font-bold px-2 py-1"
+                                        [class.bg-success]="grade.gradeValue >= 3.0"
+                                        [class.bg-danger]="grade.gradeValue < 3.0">
+                                    {{ grade.gradeValue.toFixed(1) }}
+                                  </span>
+                                </td>
+                                <td class="text-muted small">@{{ grade.gradedByTeacher?.username || 'System' }}</td>
+                                <td class="text-end">
+                                  <button type="button" class="btn btn-link text-danger p-0 border-0" (click)="onDeleteGrade(grade.id)">
+                                    <i class="bi bi-trash"></i>
+                                  </button>
+                                </td>
+                              </tr>
+                            }
+                          </tbody>
+                        </table>
+                      </div>
+                    }
+                  </div>
+
+                  <!-- Asignar Nueva Nota -->
+                  <div class="card border rounded-3 p-3 bg-white shadow-xs">
+                    <h6 class="fw-bold text-dark text-xs mb-3">Submit Student Grade</h6>
+                    <div class="row g-2">
+                      <div class="col-7">
+                        <label class="form-label text-xxs fw-bold mb-1">Subject</label>
+                        <select class="form-select text-xs" [(ngModel)]="newGrade.subjectId">
+                          <option [value]="0">-- Select subject --</option>
+                          @for (sub of selectedUserSubjects; track sub.id) {
+                            <option [value]="sub.id">{{ sub.subjectName }}</option>
+                          }
+                        </select>
+                      </div>
+                      <div class="col-3">
+                        <label class="form-label text-xxs fw-bold mb-1">Grade (2.0-5.5)</label>
+                        <input type="number" step="0.5" class="form-control text-xs" [(ngModel)]="newGrade.gradeValue" min="2" max="5.5">
+                      </div>
+                      <div class="col-2 d-flex align-items-end">
+                        <button type="button" class="btn btn-primary bg-primary-color border-primary-color py-2 w-100 rounded-2.5" (click)="onAddGrade()">
+                          <i class="bi bi-check-lg"></i>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              }
+
+            </div>
+          </div>
+        } @else {
+          <div class="card border-0 bg-slate-50 rounded-3 text-center py-5 px-4 shadow-sm h-100 d-flex flex-column align-items-center justify-content-center">
+            <div class="bg-white rounded-circle p-4 mb-3 shadow-xs text-primary-color" style="width: 80px; height: 80px; display: flex; align-items: center; justify-content: center;">
+              <i class="bi bi-person-bounding-box fs-1"></i>
+            </div>
+            <h5 class="fw-extrabold text-dark">Profile Management Panel</h5>
+            <p class="text-muted small max-w-280 mb-0">Select any system user from the directory to review, update academic credentials, manage course enrollments, or modify grades.</p>
+          </div>
+        }
+      </div>
+    </div>
+  }
+
+  <!-- Tab Content: CREATE USER -->
+  @if (activeTab === 'degrees') {
+    <div class="row g-4 animate-fade-in">
+
+      <div class="col-lg-7 col-xl-8">
+        <div class="card card-premium border-0 shadow-sm mb-4">
+          <div class="card-header bg-white border-bottom py-3 px-4 d-flex align-items-center justify-content-between">
+            <h5 class="mb-0 fw-bold text-dark"><i class="bi bi-journal-bookmark-fill text-primary-color me-2"></i>Degrees & Academic Programs</h5>
+            <span class="badge bg-primary-light text-primary-color rounded-pill px-2.5 py-1 text-xxs font-bold">{{ degreesList.length }} Programs</span>
+          </div>
+
+          <div class="card-body p-4">
+            <div class="table-responsive border rounded-3" style="max-height: 480px; overflow-y: auto;">
+              <table class="table table-hover align-middle mb-0">
+                <thead class="table-light sticky-top">
+                <tr>
+                  <th class="ps-4 sortable-header" (click)="sortDegrees('name')">
+                    Degree Name
+                    @if (degreesSortColumn === 'name') {
+                      <i class="bi" [class.bi-caret-up-fill]="degreesSortAscending" [class.bi-caret-down-fill]="!degreesSortAscending"></i>
+                    }
+                  </th>
+                  <th class="sortable-header" (click)="sortDegrees('faculty')">
+                    Faculty
+                    @if (degreesSortColumn === 'faculty') {
+                      <i class="bi" [class.bi-caret-up-fill]="degreesSortAscending" [class.bi-caret-down-fill]="!degreesSortAscending"></i>
+                    }
+                  </th>
+                  <th class="sortable-header" (click)="sortDegrees('totalCredits')">
+                    Credits (ECTS)
+                    @if (degreesSortColumn === 'totalCredits') {
+                      <i class="bi" [class.bi-caret-up-fill]="degreesSortAscending" [class.bi-caret-down-fill]="!degreesSortAscending"></i>
+                    }
+                  </th>
+                  <th class="sortable-header" (click)="sortDegrees('durationYears')">
+                    Duration (Years)
+                    @if (degreesSortColumn === 'durationYears') {
+                      <i class="bi" [class.bi-caret-up-fill]="degreesSortAscending" [class.bi-caret-down-fill]="!degreesSortAscending"></i>
+                    }
+                  </th>
+                  <th class="text-end pe-4">Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                  @if (degreesList.length === 0) {
+                    <tr>
+                      <td colspan="5" class="text-center py-5 text-muted">
+                        <i class="bi bi-journal-bookmark fs-1 d-block mb-3 opacity-50"></i>
+                        No academic programs configured yet.
+                      </td>
+                    </tr>
+                  }
+                  @for (degree of degreesList; track degree.id) {
+                    <tr>
+                      <td class="ps-4 fw-bold text-dark">{{ degree.name }}</td>
+                      <td>{{ degree.faculty || 'N/A' }}</td>
+                      <td>
+                      <span class="badge bg-slate-100 border px-2.5 py-1 text-xxs font-semibold" style="color: #1e293b !important;">
+                        {{ degree.totalCredits || 0 }} ECTS
+                      </span>
+                      </td>
+                      <td>{{ degree.durationYears || 0 }} Years</td>
+                      <td class="text-end pe-4">
+                        <button type="button" class="btn btn-sm btn-outline-primary px-2.5 rounded-2.5 shadow-xs me-2" (click)="onEditDegree(degree)">
+                          <i class="bi bi-pencil-fill"></i>
+                        </button>
+                        <button type="button" class="btn btn-sm btn-outline-danger px-2.5 rounded-2.5 shadow-xs" (click)="onDeleteDegree(degree.id)">
+                          <i class="bi bi-trash-fill"></i>
+                        </button>
+                      </td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-5 col-xl-4">
+        <div class="card card-premium border-0 shadow-sm sticky-top" style="top: 1.5rem;">
+
+          <div class="card-header bg-white border-bottom py-3 px-4 d-flex justify-content-between align-items-center">
+            <h5 class="mb-0 fw-bold text-dark">
+              @if (editingDegree) {
+                <i class="bi bi-pencil-fill text-primary-color me-2"></i>Edit Degree Program
+              } @else {
+                <i class="bi bi-bookmark-plus text-primary-color me-2"></i>Create New Degree
+              }
+            </h5>
+            @if (editingDegree) {
+              <button type="button" class="btn-close shadow-none" (click)="onCancelEditDegree()"></button>
+            }
+          </div>
+
+          <div class="card-body p-4">
+
+            @if (editingDegree) {
+              <form (ngSubmit)="onUpdateDegree()" class="animate-slide-in">
+                <div class="row g-3">
+                  <div class="col-12">
+                    <label class="form-label fw-bold text-dark small mb-1">Degree Name</label>
+                    <input type="text" class="form-control" name="editDegName" [(ngModel)]="editingDegree.name" required>
+                  </div>
+                  <div class="col-12">
+                    <label class="form-label fw-bold text-dark small mb-1">Faculty / Department</label>
+                    <input type="text" class="form-control" name="editDegFaculty" [(ngModel)]="editingDegree.faculty" required>
+                  </div>
+                  <div class="col-6">
+                    <label class="form-label fw-bold text-dark small mb-1">Total Credits (ECTS)</label>
+                    <input type="number" class="form-control" name="editDegCredits" [(ngModel)]="editingDegree.totalCredits" min="30" max="400">
+                  </div>
+                  <div class="col-6">
+                    <label class="form-label fw-bold text-dark small mb-1">Duration (Years)</label>
+                    <input type="number" class="form-control" name="editDegDuration" [(ngModel)]="editingDegree.durationYears" min="1" max="6">
+                  </div>
+                </div>
+
+                <div class="d-flex justify-content-between mt-4 pt-3 border-top gap-3">
+                  <button type="button" class="btn btn-outline-secondary px-4 py-2.5 rounded-3 fw-bold shadow-xs flex-grow-1" (click)="onCancelEditDegree()">
+                    Cancel
+                  </button>
+                  <button type="submit" class="btn btn-primary bg-primary-color border-primary-color px-4 py-2.5 rounded-3 fw-bold shadow-xs flex-grow-1">
+                    <i class="bi bi-save2-fill me-2"></i>Save Changes
+                  </button>
+                </div>
+              </form>
+            }
+
+            @else {
+              <form (ngSubmit)="onCreateDegree()" class="animate-fade-in">
+                <div class="row g-3">
+                  <div class="col-12">
+                    <label class="form-label fw-bold text-dark small mb-1">Degree Name</label>
+                    <input type="text" class="form-control" name="degName" [(ngModel)]="newDegree.name" placeholder="e.g. Computer Science" required>
+                  </div>
+                  <div class="col-12">
+                    <label class="form-label fw-bold text-dark small mb-1">Faculty / Department</label>
+                    <input type="text" class="form-control" name="degFaculty" [(ngModel)]="newDegree.faculty" placeholder="e.g. EEIA (Electrical & Electronic)" required>
+                  </div>
+                  <div class="col-6">
+                    <label class="form-label fw-bold text-dark small mb-1">Total Credits (ECTS)</label>
+                    <input type="number" class="form-control" name="degCredits" [(ngModel)]="newDegree.totalCredits" min="30" max="400">
+                  </div>
+                  <div class="col-6">
+                    <label class="form-label fw-bold text-dark small mb-1">Duration (Years)</label>
+                    <input type="number" class="form-control" name="degDuration" [(ngModel)]="newDegree.durationYears" min="1" max="6">
+                  </div>
+                </div>
+
+                <div class="d-flex justify-content-end mt-4 pt-3 border-top">
+                  <button type="submit" class="btn btn-primary bg-primary-color border-primary-color w-100 py-2.5 rounded-3 fw-bold shadow-xs">
+                    <i class="bi bi-journal-plus me-2"></i>Create Degree Program
+                  </button>
+                </div>
+              </form>
+            }
+
+          </div>
+        </div>
+      </div>
+
+    </div>
+  }
+</div>

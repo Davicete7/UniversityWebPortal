@@ -1,0 +1,350 @@
+<div class="container-fluid py-2 animate-fade-in">
+  <!-- Section Title -->
+  <div class="d-flex align-items-center gap-3 mb-4 border-bottom pb-3">
+    <div class="bg-primary-light text-primary-color rounded-3 p-3.5 d-flex align-items-center justify-content-center shadow-xs" style="width: 54px; height: 54px;">
+      <i class="bi bi-journal-bookmark-fill fs-3"></i>
+    </div>
+    <div>
+      <h3 class="fw-extrabold text-dark mb-1">Course Directory & Assignments</h3>
+      <p class="text-muted mb-0 small">Manage university subjects, lecturer allocations, and inspect student class rosters.</p>
+    </div>
+  </div>
+
+  <!-- Alert Notifications -->
+  @if (successMessage) {
+    <div class="alert alert-success border-0 rounded-3 shadow-xs d-flex align-items-center gap-3 py-3 px-4 mb-4" role="alert">
+      <i class="bi bi-check-circle-fill fs-4 text-success animate-fade-in"></i>
+      <div class="flex-grow-1">
+        <strong class="d-block text-success-800">Success</strong>
+        <span class="text-success-700 small">{{ successMessage }}</span>
+      </div>
+      <button type="button" class="btn-close ms-auto" (click)="successMessage = ''" aria-label="Close"></button>
+    </div>
+  }
+
+  @if (errorMessage) {
+    <div class="alert alert-danger border-0 rounded-3 shadow-xs d-flex align-items-center gap-3 py-3 px-4 mb-4" role="alert">
+      <i class="bi bi-exclamation-triangle-fill fs-4 text-danger animate-fade-in"></i>
+      <div class="flex-grow-1">
+        <strong class="d-block text-danger-800">Error</strong>
+        <span class="text-danger-700 small">{{ errorMessage }}</span>
+      </div>
+      <button type="button" class="btn-close ms-auto" (click)="errorMessage = ''" aria-label="Close"></button>
+    </div>
+  }
+
+  <div class="row g-4">
+    <!-- Left column: Create / Edit (if Admin) & Search Filters -->
+    <div class="col-xl-4 col-lg-5">
+      <!-- Admin Create or Edit Form -->
+      @if (userRole === 'ROLE_ADMIN') {
+        @if (selectedEditSubject) {
+          <!-- Edit Form -->
+          <div class="card card-premium border-0 shadow-sm mb-4 animate-slide-in">
+            <div class="card-header bg-white border-bottom py-3 px-4 d-flex justify-content-between align-items-center">
+              <h6 class="mb-0 fw-bold text-dark"><i class="bi bi-pencil-square text-primary-color me-2"></i>Edit Subject</h6>
+              <button type="button" class="btn-close" (click)="onCancelEditSubject()"></button>
+            </div>
+            <div class="card-body p-4">
+              <form (ngSubmit)="onUpdateSubject()" novalidate>
+                <div class="mb-3">
+                  <label class="form-label fw-bold text-dark small mb-1">Subject Name</label>
+                  <div class="input-group-custom">
+                    <span class="input-icon"><i class="bi bi-book"></i></span>
+                    <input type="text" class="form-control" name="editSubjectName" [(ngModel)]="editSubjectName" required>
+                  </div>
+                </div>
+
+                <!-- Teacher Selector -->
+                <div class="mb-3">
+                  <label class="form-label fw-bold text-dark small mb-1">Assigned Teacher</label>
+                  <select class="form-select text-xs" name="editTeacher" [(ngModel)]="editSubjectTeacherId">
+                    <option [ngValue]="null">-- Unassigned --</option>
+                    @for (teacher of teachersList; track teacher.id) {
+                      <option [value]="teacher.id">{{ teacher.firstName }} {{ teacher.lastName }} ({{ teacher.username }})</option>
+                    }
+                  </select>
+                </div>
+
+                <!-- Degrees Checklist Selector -->
+                <div class="mb-4">
+                  <label class="form-label fw-bold text-dark small mb-1">Assign to Degree Program(s)</label>
+                  <div class="border rounded-3 p-3 bg-slate-50" style="max-height: 180px; overflow-y: auto;">
+                    @if (degreesList.length === 0) {
+                      <span class="text-muted small">No degrees available. Create degrees first.</span>
+                    }
+                    @for (degree of degreesList; track degree.id) {
+                      <div class="form-check mb-2">
+                        <input
+                          type="checkbox"
+                          class="form-check-input"
+                          [id]="'edit-deg-' + degree.id"
+                          [checked]="isEditDegreeChecked(degree.id)"
+                          (change)="onToggleEditSubjectDegree(degree.id, $any($event.target).checked)">
+                        <label class="form-check-label text-xs pointer-cursor" [for]="'edit-deg-' + degree.id">
+                          {{ degree.name }}
+                        </label>
+                      </div>
+                    }
+                  </div>
+                </div>
+
+                <div class="d-flex gap-2">
+                  <button type="button" class="btn btn-outline-secondary px-3 py-2.5 rounded-3 fw-bold flex-grow-1" (click)="onCancelEditSubject()">
+                    Cancel
+                  </button>
+                  <button type="submit" class="btn btn-primary bg-primary-color border-primary-color px-4 py-2.5 rounded-3 fw-bold shadow-xs flex-grow-1">
+                    Save Changes
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        } @else {
+          <!-- Create Form -->
+          <div class="card card-premium border-0 shadow-sm mb-4">
+            <div class="card-header bg-white border-bottom py-3 px-4">
+              <h6 class="mb-0 fw-bold text-dark"><i class="bi bi-plus-circle text-primary-color me-2"></i>Create New Subject</h6>
+            </div>
+            <div class="card-body p-4">
+              <form (ngSubmit)="onCreateSubject()" novalidate>
+                <div class="mb-3">
+                  <label class="form-label fw-bold text-dark small mb-1">Subject Name</label>
+                  <div class="input-group-custom">
+                    <span class="input-icon"><i class="bi bi-book"></i></span>
+                    <input type="text" class="form-control" name="newSubjectName" [(ngModel)]="newSubjectName" placeholder="e.g., Advanced Web Design" required>
+                  </div>
+                </div>
+
+                <!-- Teacher Selector -->
+                <div class="mb-3">
+                  <label class="form-label fw-bold text-dark small mb-1">Assigned Teacher (Optional)</label>
+                  <select class="form-select text-xs" name="newTeacher" [(ngModel)]="newSubjectTeacherId">
+                    <option [ngValue]="null">-- Unassigned --</option>
+                    @for (teacher of teachersList; track teacher.id) {
+                      <option [value]="teacher.id">{{ teacher.firstName }} {{ teacher.lastName }} ({{ teacher.username }})</option>
+                    }
+                  </select>
+                </div>
+
+                <!-- Degrees Checklist Selector -->
+                <div class="mb-4">
+                  <label class="form-label fw-bold text-dark small mb-1">Assign to Degree Program(s)</label>
+                  <div class="border rounded-3 p-3 bg-slate-50" style="max-height: 180px; overflow-y: auto;">
+                    @if (degreesList.length === 0) {
+                      <span class="text-muted small">No degrees available. Create degrees first.</span>
+                    }
+                    @for (degree of degreesList; track degree.id) {
+                      <div class="form-check mb-2">
+                        <input
+                          type="checkbox"
+                          class="form-check-input"
+                          [id]="'new-deg-' + degree.id"
+                          [checked]="isNewDegreeChecked(degree.id)"
+                          (change)="onToggleNewSubjectDegree(degree.id, $any($event.target).checked)">
+                        <label class="form-check-label text-xs pointer-cursor" [for]="'new-deg-' + degree.id">
+                          {{ degree.name }}
+                        </label>
+                      </div>
+                    }
+                  </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary bg-primary-color border-primary-color btn-hover-grow w-100 py-2.5 rounded-3 fw-bold shadow-xs">
+                  <i class="bi bi-folder-plus me-2"></i>Create Subject
+                </button>
+              </form>
+            </div>
+          </div>
+        }
+      }
+
+      <!-- Search Directory Filter -->
+      <div class="card card-premium border-0 shadow-sm mb-4">
+        <div class="card-header bg-white border-bottom py-3 px-4">
+          <h6 class="mb-0 fw-bold text-dark"><i class="bi bi-search text-primary-color me-2"></i>Search Directory</h6>
+        </div>
+        <div class="card-body p-4">
+          <div class="input-group-custom">
+            <span class="input-icon"><i class="bi bi-filter"></i></span>
+            <input type="text" class="form-control" [(ngModel)]="searchQuery" placeholder="Filter by ID, name, teacher or degree...">
+          </div>
+          <div class="form-text text-muted small mt-2">
+            Type values to instantly filter the directory catalog in the table on the right.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right column: Main directory list -->
+    <div class="col-xl-8 col-lg-7">
+      <div class="card card-premium border-0 shadow-sm mb-4">
+        <div class="card-header bg-white border-bottom py-3.5 px-4 d-flex align-items-center justify-content-between">
+          <h5 class="mb-0 fw-bold text-dark"><i class="bi bi-list-stars text-primary-color me-2"></i>Subject Directory</h5>
+          <span class="badge bg-primary-light text-primary-color border border-primary-light rounded-pill px-2.5 py-1 text-xxs uppercase tracking-wider font-semibold">
+            {{ filteredSubjects.length }} active courses
+          </span>
+        </div>
+
+        <div class="card-body p-0">
+          <div class="table-responsive">
+            <table class="table table-custom align-middle">
+              <thead>
+                <tr>
+                  <th scope="col" (click)="toggleSort('id')" class="sortable-header text-center" style="width: 80px;">
+                    ID <i class="bi ms-1" [ngClass]="sortColumn === 'id' ? (sortDirection === 'asc' ? 'bi-chevron-up text-primary-color fw-bold' : 'bi-chevron-down text-primary-color fw-bold') : 'bi-chevron-expand text-muted'"></i>
+                  </th>
+                  <th scope="col" (click)="toggleSort('name')" class="sortable-header">
+                    Subject Name <i class="bi ms-1" [ngClass]="sortColumn === 'name' ? (sortDirection === 'asc' ? 'bi-chevron-up text-primary-color fw-bold' : 'bi-chevron-down text-primary-color fw-bold') : 'bi-chevron-expand text-muted'"></i>
+                  </th>
+                  <th scope="col" (click)="toggleSort('degree')" class="sortable-header">
+                    Degree Program(s) <i class="bi ms-1" [ngClass]="sortColumn === 'degree' ? (sortDirection === 'asc' ? 'bi-chevron-up text-primary-color fw-bold' : 'bi-chevron-down text-primary-color fw-bold') : 'bi-chevron-expand text-muted'"></i>
+                  </th>
+                  <th scope="col" (click)="toggleSort('teacher')" class="sortable-header">
+                    Assigned Teacher <i class="bi ms-1" [ngClass]="sortColumn === 'teacher' ? (sortDirection === 'asc' ? 'bi-chevron-up text-primary-color fw-bold' : 'bi-chevron-down text-primary-color fw-bold') : 'bi-chevron-expand text-muted'"></i>
+                  </th>
+                  <th scope="col" class="text-end px-4">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (subject of filteredSubjects; track subject.id) {
+                  <tr [class.bg-primary-light]="selectedEditSubject?.id === subject.id">
+                    <td class="text-center fw-bold text-muted small">#{{ subject.id }}</td>
+                    <td>
+                      <span class="fw-bold text-dark d-block">{{ subject.subjectName }}</span>
+                    </td>
+                    <td>
+                      @if (subject.degrees && subject.degrees.length > 0) {
+                        <div class="d-flex flex-wrap gap-1">
+                          @for (deg of subject.degrees; track deg.id) {
+                            <span class="badge bg-light text-dark border rounded-pill" style="font-size: 0.65rem;">{{ deg.name }}</span>
+                          }
+                        </div>
+                      } @else {
+                        <span class="text-xxs uppercase tracking-wider text-muted font-semibold bg-light px-2 py-0.5 rounded border">Free Elective</span>
+                      }
+                    </td>
+                    <td>
+                      @if (subject.assignedTeacher) {
+                        <span class="text-dark small fw-medium">
+                          <i class="bi bi-person-badge text-primary-color me-1"></i>
+                          {{ subject.assignedTeacher.firstName }} {{ subject.assignedTeacher.lastName }}
+                        </span>
+                      } @else {
+                        <span class="badge bg-warning-subtle text-warning-emphasis rounded-pill text-xxs font-bold px-2 py-1">
+                          <i class="bi bi-exclamation-circle me-1"></i>Unassigned
+                        </span>
+                      }
+                    </td>
+                    <td class="text-end px-4">
+                      <div class="btn-group gap-2">
+                        <!-- Teacher actions: self-assignment -->
+                        @if (userRole === 'ROLE_TEACHER') {
+                          @if (!subject.assignedTeacher) {
+                            <button class="btn btn-outline-success btn-xs px-2.5 py-1 rounded-pill fw-bold" (click)="onAssignMyself(subject.id)">
+                              <i class="bi bi-plus-circle me-1"></i>Claim Course
+                            </button>
+                          } @else if (subject.assignedTeacher.id === userId) {
+                            <button class="btn btn-outline-danger btn-xs px-2.5 py-1 rounded-pill fw-bold" (click)="onUnassignMyself(subject.id)">
+                              <i class="bi bi-dash-circle me-1"></i>Unassign
+                            </button>
+                            <button class="btn btn-outline-primary btn-xs px-2.5 py-1 rounded-pill fw-bold text-primary-color border-primary-color" (click)="onViewStudents(subject)">
+                              <i class="bi bi-people me-1"></i>Roster
+                            </button>
+                          }
+                        }
+
+                        <!-- Admin action to edit details & inspect enrolled students -->
+                        @if (userRole === 'ROLE_ADMIN') {
+                          <button class="btn btn-outline-secondary btn-xs px-2.5 py-1 rounded-pill fw-bold" (click)="onSelectEditSubject(subject)">
+                            <i class="bi bi-pencil-fill me-1"></i>Edit
+                          </button>
+                          <button class="btn btn-outline-primary btn-xs px-2.5 py-1 rounded-pill fw-bold text-primary-color border-primary-color" (click)="onViewStudents(subject)">
+                            <i class="bi bi-people me-1"></i>Roster
+                          </button>
+                          <button class="btn btn-outline-danger btn-xs px-2.5 py-1 rounded-pill fw-bold" (click)="onDeleteSubject(subject.id)">
+                            <i class="bi bi-trash-fill me-1"></i>Delete
+                          </button>
+                        }
+                      </div>
+                    </td>
+                  </tr>
+                } @empty {
+                  <tr>
+                    <td colspan="5" class="text-center py-5 text-muted bg-white">
+                      <i class="bi bi-inbox fs-2 d-block mb-2 text-slate-300"></i> No subjects match the filter query.
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Enrolled Students Detail Section -->
+      @if (selectedSubjectName) {
+        <div class="card card-premium border-0 shadow-sm mb-4 animate-slide-in">
+          <div class="card-header bg-white border-bottom py-3 px-4 d-flex justify-content-between align-items-center">
+            <h6 class="mb-0 fw-bold text-dark"><i class="bi bi-people-fill me-2 text-primary-color"></i>Enrolled Students: "{{ selectedSubjectName }}"</h6>
+            <button type="button" class="btn-close" (click)="selectedSubjectName = ''"></button>
+          </div>
+          <div class="card-body p-0">
+            <div class="table-responsive">
+              <table class="table table-custom align-middle">
+                <thead>
+                  <tr>
+                    <th (click)="sortStudents('id')" class="sortable-header text-center" style="width: 120px;">
+                      Student ID
+                      @if (studentsSortColumn === 'id') {
+                        <i class="bi" [class.bi-caret-up-fill]="studentsSortAscending" [class.bi-caret-down-fill]="!studentsSortAscending"></i>
+                      }
+                    </th>
+                    <th (click)="sortStudents('fullName')" class="sortable-header">
+                      Full Name
+                      @if (studentsSortColumn === 'fullName') {
+                        <i class="bi" [class.bi-caret-up-fill]="studentsSortAscending" [class.bi-caret-down-fill]="!studentsSortAscending"></i>
+                      }
+                    </th>
+                    <th (click)="sortStudents('email')" class="sortable-header">
+                      Academic Email
+                      @if (studentsSortColumn === 'email') {
+                        <i class="bi" [class.bi-caret-up-fill]="studentsSortAscending" [class.bi-caret-down-fill]="!studentsSortAscending"></i>
+                      }
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (student of enrolledStudents; track student.id) {
+                    <tr>
+                      <td class="text-center fw-bold text-muted small">#{{ student.id }}</td>
+                      <td>
+                        <div class="d-flex align-items-center gap-2">
+                          <div class="profile-avatar-sm bg-primary-light text-primary-color fw-bold d-flex align-items-center justify-content-center" style="width: 26px; height: 26px; font-size: 0.75rem; box-shadow: none;">
+                            {{ student.firstName[0] }}
+                          </div>
+                          <span class="fw-bold text-dark">{{ student.firstName }} {{ student.lastName }}</span>
+                        </div>
+                      </td>
+                      <td>
+                        <a href="mailto:{{ student.academicEmail }}" class="text-decoration-none text-primary-color font-medium">
+                          <i class="bi bi-envelope me-1"></i>{{ student.academicEmail }}
+                        </a>
+                      </td>
+                    </tr>
+                  } @empty {
+                    <tr>
+                      <td colspan="3" class="text-center py-4 text-muted bg-white">
+                        No students are currently enrolled in this subject.
+                      </td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+</div>

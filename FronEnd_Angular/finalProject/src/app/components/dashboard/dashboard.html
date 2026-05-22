@@ -1,0 +1,151 @@
+<div class="dashboard-wrapper min-vh-100 d-flex flex-column animate-fade-in">
+  
+  <!-- Sleek Top Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom shadow-sm px-4 py-2.5">
+    <div class="container-fluid d-flex align-items-center justify-content-between">
+      
+      <!-- Brand Logo TUL -->
+      <a class="navbar-brand d-flex align-items-center gap-2" routerLink="/dashboard">
+        <div class="brand-shield d-flex align-items-center justify-content-center">
+          <i class="bi bi-mortarboard-fill text-white"></i>
+        </div>
+        <div class="d-flex flex-column leading-tight">
+          <span class="fw-extrabold text-uppercase text-dark tracking-wider fs-6 mb-0">Politechnika Łódzka</span>
+          <span class="text-xxs text-uppercase fw-bold text-muted tracking-widest">Lodz University of Technology</span>
+        </div>
+      </a>
+      
+      <!-- User profile & Logout -->
+      <div class="d-flex align-items-center gap-3">
+        <div class="user-profile-badge d-flex align-items-center gap-2 px-3 py-1.5 rounded-pill border bg-light">
+          @if (avatarUrl) {
+            <img [src]="avatarUrl" alt="Avatar" class="profile-avatar-sm rounded-circle object-fit-cover" style="width: 32px; height: 32px;" />
+          } @else {
+            <div class="profile-avatar-sm d-flex align-items-center justify-content-center bg-primary-color text-white fw-bold">
+              {{ username ? username[0].toUpperCase() : 'U' }}
+            </div>
+          }
+          <div class="d-flex flex-column text-start">
+            <span class="text-xs fw-extrabold text-dark leading-tight">{{ username }}</span>
+            <span class="text-xxs text-muted leading-tight text-uppercase fw-bold">{{ userRole?.replace('ROLE_', '') }}</span>
+          </div>
+        </div>
+        <button class="btn btn-outline-danger btn-sm rounded-pill px-3 fw-bold d-flex align-items-center gap-1 btn-logout shadow-xs" (click)="logout()">
+          <i class="bi bi-box-arrow-right"></i>
+          <span>Logout</span>
+        </button>
+      </div>
+
+    </div>
+  </nav>
+
+  <!-- Page Body containing Sidebar and Main Panel -->
+  <div class="container-fluid flex-grow-1 d-flex p-0">
+    <div class="row g-0 w-100 flex-grow-1">
+
+      <!-- Sidebar Panel -->
+      <aside class="col-md-3 col-lg-2 bg-dark-sidebar sidebar p-3 border-end">
+        <div class="position-sticky pt-2">
+          
+          <!-- Category label -->
+          <div class="sidebar-category-title text-uppercase text-xxs tracking-widest fw-bold text-slate-500 mb-3 px-2">
+            Navigation
+          </div>
+
+          <ul class="nav flex-column gap-1.5">
+            <li class="nav-item">
+              <a class="nav-link-custom rounded" routerLink="/dashboard" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
+                <i class="bi bi-grid-1x2-fill"></i>
+                <span class="fw-bold">Dashboard Home</span>
+              </a>
+            </li>
+
+            <li class="nav-item">
+              <a class="nav-link-custom rounded" routerLink="/dashboard/profile" routerLinkActive="active">
+                <i class="bi bi-person-circle"></i>
+                <span class="fw-bold">My Profile</span>
+              </a>
+            </li>
+
+            <!-- Admin Tools -->
+            @if (userRole === 'ROLE_ADMIN') {
+              <div class="sidebar-category-title text-uppercase text-xxs tracking-widest fw-bold text-slate-500 mt-4 mb-2 px-2">
+                Admin Area
+              </div>
+              <li class="nav-item">
+                <a class="nav-link-custom rounded" routerLink="/dashboard/manageUsers" routerLinkActive="active">
+                  <i class="bi bi-people-fill"></i>
+                  <span class="fw-bold">User Directory</span>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link-custom rounded" routerLink="/dashboard/createUser" routerLinkActive="active">
+                  <i class="bi bi-person-plus-fill"></i>
+                  <span class="fw-bold">Create User</span>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link-custom rounded" routerLink="/dashboard/degreeManagement" routerLinkActive="active">
+                  <i class="bi bi-mortarboard-fill"></i>
+                  <span class="fw-bold">Degree Management</span>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link-custom rounded" routerLink="/dashboard/manageSubjects" routerLinkActive="active">
+                  <i class="bi bi-journal-bookmark-fill"></i>
+                  <span class="fw-bold">Manage Subjects</span>
+                </a>
+              </li>
+            }
+
+            <!-- Teacher Tools -->
+            @if (userRole === 'ROLE_TEACHER') {
+              <div class="sidebar-category-title text-uppercase text-xxs tracking-widest fw-bold text-slate-500 mt-4 mb-2 px-2">
+                Teacher Area
+              </div>
+              <li class="nav-item">
+                <a class="nav-link-custom rounded" routerLink="/dashboard/manageSubjects" routerLinkActive="active">
+                  <i class="bi bi-journal-bookmark-fill"></i>
+                  <span class="fw-bold">Manage Subjects</span>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link-custom rounded" routerLink="/dashboard/grading" routerLinkActive="active">
+                  <i class="bi bi-patch-check-fill"></i>
+                  <span class="fw-bold">Grade Students</span>
+                </a>
+              </li>
+            }
+
+            <!-- Student Tools -->
+            @if (userRole === 'ROLE_STUDENT') {
+              <div class="sidebar-category-title text-uppercase text-xxs tracking-widest fw-bold text-slate-500 mt-4 mb-2 px-2">
+                Student Area
+              </div>
+              <li class="nav-item">
+                <a class="nav-link-custom rounded" routerLink="/dashboard/studentPortal" routerLinkActive="active">
+                  <i class="bi bi-journal-plus"></i>
+                  <span class="fw-bold">Enroll in Subject</span>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link-custom rounded" routerLink="/dashboard/myGrades" routerLinkActive="active">
+                  <i class="bi bi-award-fill"></i>
+                  <span class="fw-bold">My Grades</span>
+                </a>
+              </li>
+            }
+          </ul>
+
+        </div>
+      </aside>
+
+      <!-- Main Panel Area -->
+      <main class="col-md-9 ms-sm-auto col-lg-10 bg-panel px-4 py-4 overflow-auto" style="max-height: 90vh;">
+        <router-outlet></router-outlet>
+      </main>
+
+    </div>
+  </div>
+
+</div>

@@ -1,0 +1,109 @@
+/* Dashboard Specific Styles - TUL Theme */
+
+.dashboard-wrapper {
+  background-color: var(--light-bg);
+}
+
+/* Navbar specific elements */
+.brand-shield {
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  background-color: var(--primary-color);
+  font-size: 1.1rem;
+  box-shadow: 0 2px 8px rgba(163, 0, 38, 0.35);
+}
+
+.profile-avatar-sm {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  font-size: 0.8rem;
+  background-color: var(--primary-color);
+  box-shadow: 0 1px 4px rgba(163, 0, 38, 0.25);
+}
+
+.btn-logout {
+  border-color: #f1f5f9;
+  background-color: #ffffff;
+  color: #ef4444;
+  transition: all 0.2s ease;
+}
+
+.btn-logout:hover {
+  background-color: #ef4444;
+  border-color: #ef4444;
+  color: #ffffff;
+  box-shadow: 0 4px 10px rgba(239, 68, 68, 0.15);
+}
+
+/* Sidebar Specific Styles */
+.bg-dark-sidebar {
+  background-color: #0f172a !important; /* Very dark slate, contrast with main crimson */
+  min-height: calc(100vh - 60px);
+}
+
+.sidebar-category-title {
+  font-size: 0.95rem !important;
+  color: #94a3b8;
+  letter-spacing: 0.15em;
+  padding-left: 22px;
+}
+
+/* Nav Links customized */
+.nav-link-custom {
+  color: #cbd5e1;
+  text-decoration: none;
+  font-size: 1.35rem;
+  padding: 18px 22px;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  border-left: 5px solid transparent;
+}
+
+.nav-link-custom i {
+  font-size: 1.65rem;
+  color: #94a3b8;
+  transition: color 0.2s ease;
+}
+
+.nav-link-custom:hover {
+  color: #ffffff;
+  background-color: rgba(255, 255, 255, 0.05);
+  border-left-color: #cbd5e1;
+}
+
+.nav-link-custom:hover i {
+  color: #ffffff;
+}
+
+/* Link active classes */
+.nav-link-custom.active {
+  color: #ffffff;
+  background-color: rgba(163, 0, 38, 0.15); /* Crimson transparent tint */
+  border-left-color: var(--primary-color); /* Crimson left border */
+}
+
+.nav-link-custom.active i {
+  color: #fca5a5; /* Crimson light */
+}
+
+/* Panels */
+.bg-panel {
+  background-color: var(--light-bg);
+}
+
+.leading-tight {
+  line-height: 1.2;
+}
+
+.text-xxs {
+  font-size: 0.65rem !important;
+}
+
+.text-xs {
+  font-size: 0.75rem !important;
+}

@@ -1,0 +1,114 @@
+/* Estilos premium para el Expediente Académico del Estudiante */
+
+.portal-header {
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--dark-bg) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.icon-box {
+  transition: transform 0.3s ease;
+}
+
+.portal-header:hover .icon-box {
+  transform: scale(1.08) rotate(5deg);
+}
+
+.gpa-card {
+  min-width: 110px;
+}
+
+/* Diseños de tarjetas */
+.card-premium {
+  border: 1px solid rgba(226, 232, 240, 0.8);
+  background-color: #ffffff;
+}
+
+/* Buscador de calificaciones */
+.search-wrapper {
+  min-width: 260px;
+}
+
+.search-icon {
+  position: absolute;
+  left: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+.search-input {
+  padding-left: 40px;
+  border: 1px solid #e2e8f0;
+  transition: all 0.25s ease-in-out;
+  background-color: #f8fafc;
+}
+
+.search-input:focus {
+  border-color: var(--primary-color);
+  background-color: #ffffff;
+  box-shadow: 0 0 0 4px rgba(163, 0, 38, 0.15);
+}
+
+/* Cabeceras ordenables */
+.sortable-header {
+  cursor: pointer;
+  user-select: none;
+  transition: color 0.2s ease;
+}
+
+.sortable-header:hover {
+  color: var(--primary-color);
+}
+
+.sortable-header i {
+  margin-left: 5px;
+  font-size: 0.85em;
+  opacity: 0.7;
+}
+
+/* Tablas estilizadas */
+.table-custom {
+  margin-bottom: 0;
+}
+
+.table-custom th {
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+  color: #64748b;
+  border-bottom: 2px solid #e2e8f0;
+}
+
+.table-custom td {
+  padding: 1rem 0.75rem;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.grade-row {
+  transition: background-color 0.2s ease;
+}
+
+.grade-row:hover {
+  background-color: #f8fafc;
+}
+
+/* Badges de notas */
+.grade-pill {
+  font-size: 0.85rem;
+  border-radius: 20px;
+  border: 1px solid transparent;
+  min-width: 50px;
+  display: inline-block;
+  text-align: center;
+}
+
+/* Animaciones */
+.animate-fade-in {
+  animation: fadeIn 0.4s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}

@@ -1,0 +1,283 @@
+/* ==========================================================================
+   DESIGN SYSTEM - UNIVERSITY MANAGEMENT PORTAL (TUL Burgundy & Grey)
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap');
+
+:root {
+  /* TUL Crimson & Grey Color Palette */
+  --primary-color: #a30026;
+  --primary-hover: #85001e;
+  --primary-light: rgba(163, 0, 38, 0.08);
+  --primary-light-border: rgba(163, 0, 38, 0.2);
+  
+  --secondary-color: #64748b;
+  --secondary-hover: #475569;
+  
+  --dark-bg: #1e293b;
+  --dark-hover: #0f172a;
+  
+  --light-bg: #f8fafc;
+  --border-color: #e2e8f0;
+  --text-main: #0f172a;
+  --text-muted: #64748b;
+  
+  /* System font stack */
+  --font-sans: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  
+  /* Shadow Elevation */
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.03);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.03);
+  --shadow-premium: 0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 10px 10px -5px rgba(0, 0, 0, 0.02);
+}
+
+/* Base Styles */
+body {
+  font-family: var(--font-sans);
+  background-color: var(--light-bg);
+  color: var(--text-main);
+  margin: 0;
+  padding: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Scrollbar Customization */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--light-bg);
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Premium Card Component */
+.card-premium {
+  background-color: #ffffff;
+  border: 1px solid var(--border-color);
+  border-radius: 1rem;
+  box-shadow: var(--shadow-md);
+  transition: box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+.card-premium:hover {
+  box-shadow: var(--shadow-lg);
+  border-color: #cbd5e1;
+}
+
+/* Interactive Hover Buttons & Elements */
+.btn-hover-grow {
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s ease, background-color 0.2s ease;
+}
+
+.btn-hover-grow:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(163, 0, 38, 0.25);
+}
+
+.btn-hover-grow:active {
+  transform: translateY(0);
+}
+
+/* Form inputs & focus states */
+.form-control, .form-select {
+  font-family: var(--font-sans);
+  font-size: 0.95rem;
+  padding: 0.625rem 0.875rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 0.5rem;
+  background-color: #ffffff;
+  color: var(--text-main);
+  transition: all 0.2s ease;
+  box-shadow: var(--shadow-sm);
+}
+
+.form-control:focus, .form-select:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 4px rgba(163, 0, 38, 0.15);
+  background-color: #ffffff;
+  outline: none;
+}
+
+/* Select option premium dropdown */
+.select-premium {
+  border: 1px solid #cbd5e1;
+  background-color: var(--light-bg);
+  transition: all 0.2s ease;
+}
+
+.select-premium:focus {
+  border-color: var(--primary-color);
+  background-color: #fff;
+  box-shadow: 0 0 0 3px rgba(163, 0, 38, 0.15);
+}
+
+/* Styled Table System */
+.table-custom {
+  margin-bottom: 0;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.table-custom th {
+  font-family: var(--font-sans);
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+  border-bottom: 2px solid var(--border-color);
+  padding: 1rem 0.75rem;
+  background-color: #ffffff;
+}
+
+.table-custom td {
+  padding: 1.1rem 0.75rem;
+  border-bottom: 1px solid #f1f5f9;
+  background-color: #ffffff;
+}
+
+.table-custom tbody tr {
+  transition: background-color 0.2s ease;
+}
+
+.table-custom tbody tr:hover td {
+  background-color: #fafafa;
+}
+
+/* Badge variants */
+.badge {
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 0.75rem;
+  padding: 0.35em 0.65em;
+  border-radius: 0.375rem;
+}
+
+.badge-premium-success {
+  background-color: #ecfdf5;
+  color: #047857;
+  border: 1px solid #a7f3d0;
+  font-weight: 700;
+  border-radius: 20px;
+}
+
+.badge-premium-warning {
+  background-color: #fffbeb;
+  color: #b45309;
+  border: 1px solid #fde68a;
+  font-weight: 700;
+  border-radius: 20px;
+}
+
+/* Universal Header style */
+.portal-header {
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--dark-bg) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  position: relative;
+  overflow: hidden;
+}
+
+.portal-header::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -20%;
+  width: 300px;
+  height: 300px;
+  background: radial-gradient(circle, rgba(255,255,255,0.05) 0%, transparent 70%);
+  transform: rotate(45deg);
+  pointer-events: none;
+}
+
+/* Animations */
+.animate-fade-in {
+  animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.animate-slide-in {
+  animation: slideIn 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateX(12px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+/* Responsive corrections */
+@media (max-width: 768px) {
+  .portal-header {
+    padding: 1.5rem !important;
+  }
+}
+
+/* TUL helper utilities */
+.text-primary-color {
+  color: var(--primary-color) !important;
+}
+.bg-primary-color {
+  background-color: var(--primary-color) !important;
+}
+.border-primary-color {
+  border-color: var(--primary-color) !important;
+}
+.bg-primary-light {
+  background-color: var(--primary-light) !important;
+}
+.border-primary-light {
+  border-color: var(--primary-light-border) !important;
+}
+
+/* Clases de colores con contraste mejorado para textos tipo slate */
+.text-slate-400 {
+  color: #94a3b8 !important;
+}
+.text-slate-500 {
+  color: #64748b !important;
+}
+
+/* Botón de advertencia/información con contraste mejorado para cumplir estándares de accesibilidad */
+.btn-outline-tul-warning {
+  color: #b45309 !important;
+  border: 1px solid #d97706 !important;
+  background-color: transparent;
+  transition: all 0.2s ease;
+}
+.btn-outline-tul-warning:hover {
+  background-color: #d97706 !important;
+  color: #ffffff !important;
+}
+
+/* Cabeceras de tabla ordenables */
+.sortable-header {
+  cursor: pointer;
+  user-select: none;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.sortable-header:hover {
+  background-color: #f1f5f9 !important;
+  color: var(--primary-color) !important;
+}
+
+.sortable-header i {
+  font-size: 0.8rem;
+  margin-left: 4px;
+}
+

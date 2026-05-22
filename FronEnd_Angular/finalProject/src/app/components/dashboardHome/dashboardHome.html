@@ -1,0 +1,251 @@
+<div class="container-fluid py-4 animate-fade-in">
+
+  <!-- Welcome banner with elegant TUL gradient -->
+  <div class="portal-header shadow-sm rounded-4 p-4 p-md-5 mb-4 text-white">
+    <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3">
+      <div>
+        <span class="badge px-3 py-2 rounded-pill mb-3 fw-bold tracking-wider text-uppercase text-xs border" style="background-color: #0f172a !important; color: #ffffff !important; border-color: rgba(255, 255, 255, 0.2) !important;">
+          <i class="bi bi-shield-lock-fill me-1 text-warning"></i> Secured Academic Connection
+        </span>
+        <h1 class="display-6 fw-extrabold tracking-tight mb-2">
+          University Management Portal
+        </h1>
+        <p class="fs-5 text-white-50 mb-0">
+          Welcome, <span class="text-white fw-bold">{{ username }}</span>. Check your system overview and quick actions below.
+        </p>
+      </div>
+      <div class="university-shield-large d-none d-lg-flex align-items-center justify-content-center bg-white bg-opacity-10 rounded-4 border border-white border-opacity-15">
+        <i class="bi bi-mortarboard text-white" style="font-size: 3.5rem;"></i>
+      </div>
+    </div>
+  </div>
+
+  <!-- Admin Home Workspace -->
+  @if (userRole === 'ROLE_ADMIN') {
+    <div class="row g-4 mb-4">
+      <div class="col-lg-7">
+        <div class="card card-premium border-0 shadow-sm h-100">
+          <div class="card-header bg-white border-bottom-0 pt-4 pb-0 px-4">
+            <h5 class="fw-bold text-dark"><i class="bi bi-journal-text text-primary-color me-2"></i>Administrator Handbook</h5>
+          </div>
+          <div class="card-body p-4">
+            <p class="text-muted mb-4">As a system administrator, you are responsible for maintaining the integrity of the university's database. Please follow these guidelines when operating the portal:</p>
+
+            <ul class="list-group list-group-flush text-muted gap-2">
+              <li class="list-group-item px-0 border-0 d-flex align-items-start gap-2.5">
+                <i class="bi bi-person-fill-add text-primary-color fs-5"></i> 
+                <div>
+                  <strong>User Provisioning:</strong> Verify academic emails before generating Student/Teacher profiles in <a routerLink="/dashboard/manageUsers" class="text-decoration-none fw-bold text-primary-color">Manage Users</a>.
+                </div>
+              </li>
+              <li class="list-group-item px-0 border-0 d-flex align-items-start gap-2.5">
+                <i class="bi bi-shield-check text-primary-color fs-5"></i>
+                <div>
+                  <strong>Degree Program Assignment:</strong> Both Students and Teachers must be associated with a valid Degree Program upon profile registration.
+                </div>
+              </li>
+              <li class="list-group-item px-0 border-0 d-flex align-items-start gap-2.5">
+                <i class="bi bi-journal-check text-primary-color fs-5"></i>
+                <div>
+                  <strong>Subject Management:</strong> Verify that active subjects have at least one professor assigned under <a routerLink="/dashboard/manageSubjects" class="text-decoration-none fw-bold text-primary-color">Manage Subjects</a>.
+                </div>
+              </li>
+              <li class="list-group-item px-0 border-0 d-flex align-items-start gap-2.5">
+                <i class="bi bi-database-check text-primary-color fs-5"></i>
+                <div>
+                  <strong>Security Audits:</strong> Any changes made to database records are permanently tracked in PostgreSQL for academic transparency.
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-5">
+        <div class="card card-premium border-0 shadow-sm h-100 bg-white">
+          <div class="card-body p-4">
+            <h5 class="fw-bold text-dark mb-4"><i class="bi bi-shield-fill text-primary-color me-2"></i>System Administrators</h5>
+
+            <div class="table-responsive">
+              <table class="table table-custom align-middle">
+                <thead>
+                  <tr>
+                    <th class="sortable-header text-uppercase font-weight-bold" style="font-size: 0.75rem;" (click)="toggleSort('name')">
+                      Name
+                      @if (sortColumn === 'name') {
+                        <i class="bi" [class.bi-caret-up-fill]="sortAscending" [class.bi-caret-down-fill]="!sortAscending"></i>
+                      } @else {
+                        <i class="bi bi-chevron-expand text-muted opacity-50"></i>
+                      }
+                    </th>
+                    <th class="sortable-header text-uppercase font-weight-bold" style="font-size: 0.75rem;" (click)="toggleSort('email')">
+                      Email
+                      @if (sortColumn === 'email') {
+                        <i class="bi" [class.bi-caret-up-fill]="sortAscending" [class.bi-caret-down-fill]="!sortAscending"></i>
+                      } @else {
+                        <i class="bi bi-chevron-expand text-muted opacity-50"></i>
+                      }
+                    </th>
+                    <th class="sortable-header text-uppercase font-weight-bold" style="font-size: 0.75rem;" (click)="toggleSort('phone')">
+                      Phone
+                      @if (sortColumn === 'phone') {
+                        <i class="bi" [class.bi-caret-up-fill]="sortAscending" [class.bi-caret-down-fill]="!sortAscending"></i>
+                      } @else {
+                        <i class="bi bi-chevron-expand text-muted opacity-50"></i>
+                      }
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (admin of adminsList; track admin.id) {
+                    <tr>
+                      <td class="fw-bold text-dark text-xs">
+                        {{ admin.firstName }} {{ admin.lastName }}
+                      </td>
+                      <td class="text-muted small text-xs">
+                        {{ admin.academicEmail }}
+                      </td>
+                      <td class="text-muted small text-xs">
+                        {{ admin.phoneNumber || 'N/A' }}
+                      </td>
+                    </tr>
+                  } @empty {
+                    <tr>
+                      <td colspan="3" class="text-center text-muted py-4">
+                        No system administrators found.
+                      </td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- Teacher Home Workspace -->
+  @if (userRole === 'ROLE_TEACHER') {
+    <div class="row g-4 mb-4">
+      <div class="col-12">
+        <div class="card card-premium border-0 shadow-sm">
+          <div class="card-body p-4 p-md-5">
+            <div class="d-flex align-items-center gap-3 mb-4">
+              <div class="bg-primary-light text-primary-color rounded-3 p-3 d-flex align-items-center justify-content-center">
+                <i class="bi bi-briefcase-fill fs-3"></i>
+              </div>
+              <div>
+                <h4 class="fw-bold text-dark mb-1">Faculty Workspace</h4>
+                <p class="text-muted mb-0">Welcome to the academic term. Manage your assigned subjects and student evaluations here.</p>
+              </div>
+            </div>
+            
+            <div class="row g-4">
+              <!-- Card 1: My Subjects -->
+              <div class="col-md-6 col-lg-4">
+                <div class="p-4 border rounded-4 bg-light h-100 d-flex flex-column justify-content-between pointer-cursor btn-hover-grow" (click)="navigateTo('/dashboard/manageSubjects')">
+                  <div>
+                    <h6 class="fw-bold text-dark mb-2"><i class="bi bi-bookmarks-fill text-primary-color me-2"></i>My Subjects</h6>
+                    <p class="small text-muted mb-3">Claim available university courses or manage enrolled student lists.</p>
+                  </div>
+                  <button class="btn btn-outline-primary btn-sm rounded-pill px-3 fw-bold align-self-start border-primary-color text-primary-color" (click)="navigateTo('/dashboard/manageSubjects'); $event.stopPropagation()">
+                    Go to Subjects
+                  </button>
+                </div>
+              </div>
+              
+              <!-- Card 2: Grading Panel -->
+              <div class="col-md-6 col-lg-4">
+                <div class="p-4 border rounded-4 bg-light h-100 d-flex flex-column justify-content-between pointer-cursor btn-hover-grow" (click)="navigateTo('/dashboard/grading')">
+                  <div>
+                    <h6 class="fw-bold text-dark mb-2"><i class="bi bi-check2-square text-success me-2"></i>Grading Panel</h6>
+                    <p class="small text-muted mb-3">Input laboratory, test, and exam grades for your classes.</p>
+                  </div>
+                  <button class="btn btn-outline-success btn-sm rounded-pill px-3 fw-bold align-self-start" (click)="navigateTo('/dashboard/grading'); $event.stopPropagation()">
+                    Go to Grading
+                  </button>
+                </div>
+              </div>
+
+              <!-- Card 3: External Link TUL -->
+              <a href="https://p.lodz.pl/en" target="_blank" rel="noopener noreferrer" class="col-md-6 col-lg-4 text-decoration-none text-start">
+                <div class="p-4 border rounded-4 bg-light h-100 d-flex flex-column justify-content-between pointer-cursor btn-hover-grow">
+                  <div>
+                    <h6 class="fw-bold text-dark mb-2"><i class="bi bi-info-circle-fill text-warning me-2"></i>Information Desk</h6>
+                    <p class="small text-muted mb-3">View TUL academic regulations and evaluation guidelines.</p>
+                  </div>
+                  <button class="btn btn-outline-tul-warning btn-sm rounded-pill px-3 fw-bold align-self-start">
+                    TUL Website
+                  </button>
+                </div>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- Student Home Workspace -->
+  @if (userRole === 'ROLE_STUDENT') {
+    <div class="row g-4 mb-4">
+      <div class="col-12">
+        <div class="card card-premium border-0 shadow-sm">
+          <div class="card-body p-4 p-md-5">
+            <div class="d-flex align-items-center gap-3 mb-4">
+              <div class="bg-primary-light text-primary-color rounded-3 p-3 d-flex align-items-center justify-content-center">
+                <i class="bi bi-backpack-fill fs-3"></i>
+              </div>
+              <div>
+                <h4 class="fw-bold text-dark mb-1">Student Workspace</h4>
+                <p class="text-muted mb-0">Track your academic progress, join courses, and review your evaluations.</p>
+              </div>
+            </div>
+            
+            <div class="row g-4">
+              <!-- Card 1: Course Registration -->
+              <div class="col-md-6 col-lg-4">
+                <div class="p-4 border rounded-4 bg-light h-100 d-flex flex-column justify-content-between pointer-cursor btn-hover-grow" (click)="navigateTo('/dashboard/studentPortal')">
+                  <div>
+                    <h6 class="fw-bold text-dark mb-2"><i class="bi bi-journal-plus text-primary-color me-2"></i>Subject Registration</h6>
+                    <p class="small text-muted mb-3">Browse available lectures for your degree and register to matriculate.</p>
+                  </div>
+                  <button class="btn btn-outline-primary btn-sm rounded-pill px-3 fw-bold align-self-start border-primary-color text-primary-color" (click)="navigateTo('/dashboard/studentPortal'); $event.stopPropagation()">
+                    Enroll in Courses
+                  </button>
+                </div>
+              </div>
+
+              <!-- Card 2: Academic Record -->
+              <div class="col-md-6 col-lg-4">
+                <div class="p-4 border rounded-4 bg-light h-100 d-flex flex-column justify-content-between pointer-cursor btn-hover-grow" (click)="navigateTo('/dashboard/myGrades')">
+                  <div>
+                    <h6 class="fw-bold text-dark mb-2"><i class="bi bi-award-fill text-success me-2"></i>Academic Record</h6>
+                    <p class="small text-muted mb-3">Consult your official transcript of grades and GPA score calculations.</p>
+                  </div>
+                  <button class="btn btn-outline-success btn-sm rounded-pill px-3 fw-bold align-self-start" (click)="navigateTo('/dashboard/myGrades'); $event.stopPropagation()">
+                    Check My Grades
+                  </button>
+                </div>
+              </div>
+
+              <!-- Card 3: External Support -->
+              <a href="https://p.lodz.pl/en" target="_blank" rel="noopener noreferrer" class="col-md-6 col-lg-4 text-decoration-none text-start">
+                <div class="p-4 border rounded-4 bg-light h-100 d-flex flex-column justify-content-between pointer-cursor btn-hover-grow">
+                  <div>
+                    <h6 class="fw-bold text-dark mb-2"><i class="bi bi-info-circle-fill text-warning me-2"></i>TUL Support</h6>
+                    <p class="small text-muted mb-3">Access study resources, schedules and contacts from Lodz University.</p>
+                  </div>
+                  <button class="btn btn-outline-tul-warning btn-sm rounded-pill px-3 fw-bold align-self-start">
+                    TUL Portal
+                  </button>
+                </div>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+</div>

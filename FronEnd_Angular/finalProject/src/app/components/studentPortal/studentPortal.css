@@ -1,0 +1,169 @@
+/* Estilos premium para el Portal del Estudiante */
+
+.portal-header {
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--dark-bg) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.icon-box {
+  transition: transform 0.3s ease;
+}
+
+.portal-header:hover .icon-box {
+  transform: rotate(10deg) scale(1.05);
+}
+
+/* Diseños de tarjetas premium */
+.card-premium {
+  border: 1px solid rgba(226, 232, 240, 0.8);
+  background-color: #ffffff;
+}
+
+/* Buscador interactivo */
+.search-wrapper {
+  min-width: 260px;
+}
+
+.search-icon {
+  position: absolute;
+  left: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+.search-input {
+  padding-left: 40px;
+  border: 1px solid #e2e8f0;
+  transition: all 0.25s ease-in-out;
+  background-color: #f8fafc;
+}
+
+.search-input:focus {
+  border-color: var(--primary-color);
+  background-color: #ffffff;
+  box-shadow: 0 0 0 4px rgba(163, 0, 38, 0.15);
+}
+
+/* Cabeceras de tabla ordenables */
+.sortable-header {
+  cursor: pointer;
+  user-select: none;
+  transition: color 0.2s ease;
+}
+
+.sortable-header:hover {
+  color: var(--primary-color);
+}
+
+.sortable-header i {
+  margin-left: 5px;
+  font-size: 0.85em;
+  opacity: 0.7;
+}
+
+/* Tablas estilizadas */
+.table-custom {
+  margin-bottom: 0;
+}
+
+.table-custom th {
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+  color: #64748b;
+  border-bottom: 2px solid #e2e8f0;
+}
+
+.table-custom td {
+  padding: 1rem 0.75rem;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+/* Fila interactiva (Fase 5 - Efectos hover) */
+.subject-row {
+  transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.subject-row:hover {
+  background-color: #f8fafc;
+}
+
+/* Badges y botones premium */
+.badge-premium-success {
+  background-color: #ecfdf5;
+  color: #059669;
+  border: 1px solid #a7f3d0;
+  font-weight: 700;
+  font-size: 0.75rem;
+  border-radius: 20px;
+}
+
+.btn-hover-grow {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.btn-hover-grow:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(163, 0, 38, 0.25);
+}
+
+/* Elementos de la lista lateral */
+.list-item-custom {
+  transition: all 0.2s ease;
+  border: 1px solid transparent;
+  background-color: #f8fafc;
+}
+
+.list-item-custom:hover {
+  background-color: #f1f5f9;
+  transform: translateX(4px);
+}
+
+.active-item {
+  background-color: var(--primary-light) !important;
+  border-left: 4px solid var(--primary-color) !important;
+}
+
+.active-item .list-title {
+  color: var(--primary-color) !important;
+}
+
+/* Avatar de estudiantes */
+.avatar {
+  width: 40px;
+  height: 40px;
+  font-size: 0.9rem;
+  border: 2px solid #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+/* Enlace a email de compañeros */
+.email-link {
+  transition: color 0.15s ease;
+}
+
+.email-link:hover {
+  color: var(--primary-color) !important;
+}
+
+
+/* Animaciones */
+.animate-fade-in {
+  animation: fadeIn 0.4s ease-out;
+}
+
+.animate-slide-in {
+  animation: slideIn 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateX(20px); }
+  to { opacity: 1; transform: translateX(0); }
+}

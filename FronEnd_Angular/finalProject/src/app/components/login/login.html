@@ -1,0 +1,88 @@
+<div class="login-wrapper d-flex align-items-center justify-content-center min-vh-100 animate-fade-in">
+  <!-- Subtle decorative background shapes -->
+  <div class="bg-shape-1"></div>
+  <div class="bg-shape-2"></div>
+
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-11 col-sm-10 col-md-7 col-lg-5 col-xl-4">
+        <!-- Glassmorphism login card -->
+        <div class="card card-login border-0 shadow-premium overflow-hidden">
+          
+          <!-- Card top accent bar with TUL Crimson -->
+          <div class="accent-bar"></div>
+
+          <!-- Brand header -->
+          <div class="card-body px-4 py-5 px-sm-5 text-center">
+            <div class="logo-shield mb-3 mx-auto d-flex align-items-center justify-content-center">
+              <i class="bi bi-mortarboard-fill text-white fs-3"></i>
+            </div>
+            <h4 class="fw-extrabold text-uppercase tracking-wider text-dark mb-1">
+              Politechnika Łódzka
+            </h4>
+            <p class="text-muted text-xs text-uppercase fw-bold mb-4 tracking-widest text-primary-color">
+              Lodz University of Technology
+            </p>
+
+            @if (errorMessage) {
+              <div class="alert alert-custom-danger border-0 rounded-3 p-3 mb-4 text-start d-flex align-items-center" role="alert">
+                <i class="bi bi-exclamation-triangle-fill me-2 fs-5"></i>
+                <span class="small fw-semibold">{{ errorMessage }}</span>
+              </div>
+            }
+
+            <form (ngSubmit)="onSubmit()" #loginForm="ngForm" class="text-start">
+              <div class="mb-3">
+                <label for="username" class="form-label text-muted fw-bold text-xs text-uppercase tracking-wider">Username</label>
+                <div class="input-group-custom">
+                  <span class="input-icon"><i class="bi bi-person-fill"></i></span>
+                  <input 
+                    type="text" 
+                    class="form-control login-input" 
+                    id="username"
+                    name="username" 
+                    placeholder="Enter your username"
+                    [(ngModel)]="credentials.username" 
+                    required
+                  >
+                </div>
+              </div>
+
+              <div class="mb-4">
+                <label for="password" class="form-label text-muted fw-bold text-xs text-uppercase tracking-wider">Password</label>
+                <div class="input-group-custom">
+                  <span class="input-icon"><i class="bi bi-lock-fill"></i></span>
+                  <input 
+                    type="password" 
+                    class="form-control login-input" 
+                    id="password"
+                    name="password" 
+                    placeholder="Enter your password"
+                    [(ngModel)]="credentials.password" 
+                    required
+                  >
+                </div>
+              </div>
+
+              <div class="d-grid mt-4">
+                <button 
+                  type="submit" 
+                  class="btn btn-login py-2.5 rounded-3 fw-bold text-uppercase tracking-wider btn-hover-grow" 
+                  [disabled]="!loginForm.form.valid"
+                >
+                  Sign In
+                </button>
+              </div>
+            </form>
+          </div>
+
+          <!-- Bottom Footer -->
+          <div class="card-footer bg-light border-0 py-3 text-center">
+            <span class="text-muted text-xs">University Grade & Subject Manager &copy; 2026</span>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

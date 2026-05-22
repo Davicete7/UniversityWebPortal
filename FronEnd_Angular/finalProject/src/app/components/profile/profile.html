@@ -1,0 +1,171 @@
+<div class="profile-container animate-fade-in py-4">
+  
+  <!-- Encabezado Premium -->
+  <div class="d-flex align-items-center justify-content-between mb-4 border-bottom pb-3">
+    <div>
+      <h1 class="h3 fw-extrabold text-uppercase text-dark tracking-wider m-0">My Profile</h1>
+      <p class="text-muted text-sm m-0">Manage your personal settings, upload an avatar and update security credentials.</p>
+    </div>
+    <div class="academic-badge px-3 py-1.5 rounded bg-primary-subtle border border-primary text-primary fw-bold text-uppercase text-xs">
+      {{ profileData.role ? profileData.role.replace('ROLE_', '') : 'USER' }}
+    </div>
+  </div>
+
+  <!-- Alertas de Éxito / Error -->
+  @if (successMessage) {
+    <div class="alert alert-success alert-premium d-flex align-items-center gap-2.5 shadow-sm border-start-5 border-success mb-4" role="alert">
+      <i class="bi bi-check-circle-fill text-success fs-5"></i>
+      <div class="fw-bold">{{ successMessage }}</div>
+    </div>
+  }
+
+  @if (errorMessages.length > 0) {
+    <div class="alert alert-danger alert-premium shadow-sm border-start-5 border-danger mb-4" role="alert">
+      <div class="d-flex align-items-center gap-2.5 mb-2">
+        <i class="bi bi-exclamation-triangle-fill text-danger fs-5"></i>
+        <h5 class="alert-heading fw-extrabold m-0 text-danger-emphasis">Please fix the following:</h5>
+      </div>
+      <ul class="mb-0 ps-3">
+        @for (err of errorMessages; track err) {
+          <li class="fw-semibold text-danger-emphasis">{{ err }}</li>
+        }
+      </ul>
+    </div>
+  }
+
+  <div class="row g-4">
+    
+    <!-- Columna Izquierda: Información de Cuenta y Foto de Perfil -->
+    <div class="col-lg-4">
+      <div class="card card-premium shadow-sm border-0 h-100">
+        <div class="card-body p-4 d-flex flex-column align-items-center text-center">
+          
+          <!-- Foto de Perfil / Avatar -->
+          <div class="avatar-upload-container position-relative mb-4">
+            <div class="avatar-preview-lg rounded-circle overflow-hidden shadow border border-3 border-white">
+              @if (avatar) {
+                <img [src]="avatar" alt="Profile avatar" class="w-100 h-100 object-fit-cover" />
+              } @else {
+                <div class="w-100 h-100 d-flex align-items-center justify-content-center bg-primary-color text-white fw-extrabold fs-1">
+                  {{ profileData.username ? profileData.username[0].toUpperCase() : 'U' }}
+                </div>
+              }
+            </div>
+            
+            <!-- Botón flotante para subir archivo -->
+            <label for="avatarFile" class="btn btn-primary-color btn-sm rounded-circle position-absolute bottom-0 end-0 p-2 shadow d-flex align-items-center justify-content-center" style="width: 38px; height: 38px; cursor: pointer;">
+              <i class="bi bi-camera-fill text-white fs-6"></i>
+              <input type="file" id="avatarFile" accept="image/*" class="d-none" (change)="onFileSelected($event)" />
+            </label>
+          </div>
+
+          <h4 class="fw-bold mb-1">{{ firstName }} {{ lastName }}</h4>
+          <p class="text-slate-500 text-sm mb-4">&#64;{{ profileData.username }}</p>
+
+          <!-- Botón para eliminar foto si existe -->
+          @if (avatar) {
+            <button class="btn btn-outline-danger btn-xs rounded-pill px-3 mb-4 fw-bold" (click)="removeAvatar()">
+              <i class="bi bi-trash-fill"></i> Remove Photo
+            </button>
+          }
+
+          <hr class="w-100 my-3 text-muted">
+
+          <!-- Detalles de cuenta (Solo lectura) -->
+          <div class="w-100 text-start">
+            <div class="mb-3">
+              <label class="text-xxs text-uppercase tracking-widest text-muted fw-bold d-block mb-1">Academic Email</label>
+              <div class="bg-light p-2.5 rounded border text-truncate fw-semibold text-dark text-sm">
+                <i class="bi bi-envelope-fill text-muted me-2"></i>{{ profileData.academicEmail }}
+              </div>
+            </div>
+
+            @if (profileData.degreeName) {
+              <div class="mb-3">
+                <label class="text-xxs text-uppercase tracking-widest text-muted fw-bold d-block mb-1">Degree / Faculty</label>
+                <div class="bg-light p-2.5 rounded border fw-semibold text-dark text-sm">
+                  <i class="bi bi-mortarboard-fill text-muted me-2"></i>{{ profileData.degreeName }}
+                </div>
+              </div>
+            }
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- Columna Derecha: Formulario de Modificación de Datos -->
+    <div class="col-lg-8">
+      <div class="card card-premium shadow-sm border-0">
+        <div class="card-body p-4">
+          <form (submit)="onSubmit(); $event.preventDefault()">
+            
+            <h5 class="fw-extrabold text-uppercase tracking-wider text-dark mb-4 border-bottom pb-2">
+              <i class="bi bi-person-fill text-primary-color me-2"></i>Personal Details
+            </h5>
+
+            <div class="row g-3 mb-4">
+              <div class="col-md-6">
+                <label for="firstNameInput" class="form-label text-sm fw-bold text-dark">First Name <span class="text-danger">*</span></label>
+                <div class="input-group">
+                  <span class="input-group-text bg-light"><i class="bi bi-person text-muted"></i></span>
+                  <input type="text" id="firstNameInput" class="form-control" [(ngModel)]="firstName" name="firstName" placeholder="Enter first name" />
+                </div>
+              </div>
+              <div class="col-md-6">
+                <label for="lastNameInput" class="form-label text-sm fw-bold text-dark">Last Name <span class="text-danger">*</span></label>
+                <div class="input-group">
+                  <span class="input-group-text bg-light"><i class="bi bi-person text-muted"></i></span>
+                  <input type="text" id="lastNameInput" class="form-control" [(ngModel)]="lastName" name="lastName" placeholder="Enter last name" />
+                </div>
+              </div>
+            </div>
+
+            <div class="mb-4">
+              <label for="phoneInput" class="form-label text-sm fw-bold text-dark">Phone Number</label>
+              <div class="input-group">
+                <span class="input-group-text bg-light"><i class="bi bi-telephone text-muted"></i></span>
+                <input type="text" id="phoneInput" class="form-control" [(ngModel)]="phoneNumber" name="phoneNumber" placeholder="e.g. +48 123 456 789" />
+              </div>
+            </div>
+
+            <div class="mb-4">
+              <label for="bioInput" class="form-label text-sm fw-bold text-dark">Academic Bio</label>
+              <textarea id="bioInput" class="form-control" rows="3" [(ngModel)]="bio" name="bio" placeholder="Tell us about your academic background, research interests, or courses..."></textarea>
+            </div>
+
+            <h5 class="fw-extrabold text-uppercase tracking-wider text-dark mb-4 border-bottom pb-2 mt-5">
+              <i class="bi bi-shield-lock-fill text-primary-color me-2"></i>Change Password
+            </h5>
+
+            <div class="row g-3 mb-4">
+              <div class="col-md-6">
+                <label for="newPasswordInput" class="form-label text-sm fw-bold text-dark">New Password</label>
+                <div class="input-group">
+                  <span class="input-group-text bg-light"><i class="bi bi-lock text-muted"></i></span>
+                  <input type="password" id="newPasswordInput" class="form-control" [(ngModel)]="newPassword" name="newPassword" placeholder="Minimum 6 characters" />
+                </div>
+              </div>
+              <div class="col-md-6">
+                <label for="confirmPasswordInput" class="form-label text-sm fw-bold text-dark">Confirm New Password</label>
+                <div class="input-group">
+                  <span class="input-group-text bg-light"><i class="bi bi-lock-fill text-muted"></i></span>
+                  <input type="password" id="confirmPasswordInput" class="form-control" [(ngModel)]="confirmPassword" name="confirmPassword" placeholder="Repeat password" />
+                </div>
+              </div>
+            </div>
+
+            <div class="d-flex justify-content-end border-top pt-4 mt-4">
+              <button type="submit" class="btn btn-primary-color px-5 py-2.5 rounded shadow-sm fw-bold d-flex align-items-center gap-2">
+                <i class="bi bi-save-fill"></i> Save Changes
+              </button>
+            </div>
+
+          </form>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</div>
