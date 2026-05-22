@@ -75,14 +75,14 @@ export class SubjectManagementComponent implements OnInit {
       this.userId = parseInt(storedId, 10);
     }
 
-    // Cargamos el listado inicial de asignaturas
-    this.loadTeacherDegree();
-    this.loadSubjects();
-
-    // Si es administrador, cargamos también las carreras y los profesores
+    // Si es administrador, cargamos también las carreras y los profesores, y todas las asignaturas directamente
     if (this.userRole === 'ROLE_ADMIN') {
+      this.loadSubjects();
       this.loadDegrees();
       this.loadTeachers();
+    } else {
+      // Para profesores, primero cargamos su carrera y luego sus asignaturas (evitando race conditions)
+      this.loadTeacherDegree();
     }
   }
 
@@ -90,11 +90,13 @@ export class SubjectManagementComponent implements OnInit {
   loadTeacherDegree(): void {
     this.profileService.getProfile().subscribe({
       next: (profile) => {
-        this.teacherDegree = profile?.degreeName;
+        this.teacherDegree = profile?.degreeName || '';
+        this.loadSubjects();
         this.cdr.markForCheck();
       },
       error: (err) => {
         console.error('Error loading degre of Teacher:', err);
+        this.loadSubjects();
       },
     });
   }
@@ -129,11 +131,14 @@ export class SubjectManagementComponent implements OnInit {
   loadSubjects(): void {
     this.subjectService.getAllSubjects().subscribe({
       next: (data) => {
-        // Aplicamos el filtro antes de guardar los datos en this.subjects
-        this.subjects = data.filter((subject) =>
-          subject.degrees?.some((degree) => degree.name === this.teacherDegree),
-        );
-
+        if (this.userRole === 'ROLE_ADMIN') {
+          this.subjects = data;
+        } else {
+          // Aplicamos el filtro antes de guardar los datos en this.subjects
+          this.subjects = data.filter((subject) =>
+            subject.degrees?.some((degree) => degree.name === this.teacherDegree),
+          );
+        }
         this.cdr.markForCheck();
       },
       error: (err) => {

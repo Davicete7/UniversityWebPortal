@@ -398,6 +398,87 @@
   }
 
   <!-- Tab Content: CREATE USER -->
+  @if (activeTab === 'create') {
+    <div class="row justify-content-center animate-fade-in">
+      <div class="col-lg-8 col-xl-6">
+        <div class="card card-premium border-0 shadow-sm">
+          <div class="card-header bg-white border-bottom py-3 px-4 d-flex align-items-center gap-2">
+            <i class="bi bi-person-plus-fill text-primary-color fs-4"></i>
+            <h5 class="mb-0 fw-bold text-dark">Register New User Account</h5>
+          </div>
+          <div class="card-body p-4">
+            <form (ngSubmit)="onSubmit()" novalidate>
+              <div class="row g-3">
+                <div class="col-sm-6">
+                  <label class="form-label fw-bold text-dark small mb-1">First Name <span class="text-danger">*</span></label>
+                  <div class="input-group-custom">
+                    <span class="input-icon"><i class="bi bi-person"></i></span>
+                    <input type="text" class="form-control" name="newFirstName" [(ngModel)]="newUser.firstName" placeholder="e.g. John" required>
+                  </div>
+                </div>
+                <div class="col-sm-6">
+                  <label class="form-label fw-bold text-dark small mb-1">Last Name <span class="text-danger">*</span></label>
+                  <div class="input-group-custom">
+                    <span class="input-icon"><i class="bi bi-person"></i></span>
+                    <input type="text" class="form-control" name="newLastName" [(ngModel)]="newUser.lastName" placeholder="e.g. Doe" required>
+                  </div>
+                </div>
+                <div class="col-12">
+                  <label class="form-label fw-bold text-dark small mb-1">Username <span class="text-danger">*</span></label>
+                  <div class="input-group-custom">
+                    <span class="input-icon"><i class="bi bi-at"></i></span>
+                    <input type="text" class="form-control" name="newUsername" [(ngModel)]="newUser.username" placeholder="e.g. jdoe" required>
+                  </div>
+                </div>
+                <div class="col-12">
+                  <label class="form-label fw-bold text-dark small mb-1">Academic Email <span class="text-danger">*</span></label>
+                  <div class="input-group-custom">
+                    <span class="input-icon"><i class="bi bi-envelope"></i></span>
+                    <input type="email" class="form-control" name="newEmail" [(ngModel)]="newUser.academicEmail" placeholder="e.g. john.doe@p.lodz.pl" required>
+                  </div>
+                </div>
+                <div class="col-12">
+                  <label class="form-label fw-bold text-dark small mb-1">Temporary Password <span class="text-danger">*</span></label>
+                  <div class="input-group-custom">
+                    <span class="input-icon"><i class="bi bi-key"></i></span>
+                    <input type="password" class="form-control" name="newPassword" [(ngModel)]="newUser.password" placeholder="••••••••" required>
+                  </div>
+                </div>
+                <div class="col-sm-6">
+                  <label class="form-label fw-bold text-dark small mb-1">System Role <span class="text-danger">*</span></label>
+                  <select class="form-select text-xs" name="newRole" [(ngModel)]="newUser.role" required>
+                    <option value="ROLE_STUDENT">Student</option>
+                    <option value="ROLE_TEACHER">Teacher</option>
+                    <option value="ROLE_ADMIN">Administrator</option>
+                  </select>
+                </div>
+                
+                @if (newUser.role === 'ROLE_STUDENT' || newUser.role === 'ROLE_TEACHER') {
+                  <div class="col-sm-6 animate-fade-in">
+                    <label class="form-label fw-bold text-dark small mb-1">Degree Program <span class="text-danger">*</span></label>
+                    <select class="form-select text-xs" name="newDegreeName" [(ngModel)]="newUser.degreeName" required>
+                      <option value="">-- Select Degree Program --</option>
+                      @for (degree of degreesList; track degree.id) {
+                        <option [value]="degree.name">{{ degree.name }}</option>
+                      }
+                    </select>
+                  </div>
+                }
+              </div>
+
+              <div class="d-flex justify-content-end mt-4 pt-3 border-top">
+                <button type="submit" class="btn btn-primary bg-primary-color border-primary-color w-100 py-2.5 rounded-3 fw-bold shadow-xs">
+                  <i class="bi bi-person-plus-fill me-2"></i>Register User Account
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- Tab Content: DEGREE MANAGEMENT -->
   @if (activeTab === 'degrees') {
     <div class="row g-4 animate-fade-in">
 
